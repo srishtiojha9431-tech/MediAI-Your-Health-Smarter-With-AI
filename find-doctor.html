@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#103b29">
+
+    <title>Medi AI — Find a Doctor</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --doctor-ink: #173b2c;
+            --doctor-muted: #718078;
+            --doctor-green: #23734d;
+            --doctor-green-dark: #164d34;
+            --doctor-mint: #eaf4ed;
+            --doctor-border: #e0e9e1;
+            --doctor-bg: #f4f8f5;
+            --doctor-white: #ffffff;
+            --doctor-forest: #103b29;
+            --doctor-forest-light: #174c35;
+            --doctor-shadow: 0 8px 26px rgba(23, 59, 44, 0.045);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body.doctor-page {
+            margin: 0;
+            background: var(--doctor-bg);
+            color: var(--doctor-ink);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        .doctor-page button,
+        .doctor-page input,
+        .doctor-page select {
+            font: inherit;
+        }
+
+        .doctor-page button {
+            cursor: pointer;
+        }
+
+        .doctor-page a {
+            text-decoration: none;
+        }
+
+        /* Shared page layout from the Medi AI pages */
+        .doctor-page .app {
+            display: flex;
+            align-items: stretch;
+            min-height: 100vh;
+        }
+
+        .doctor-page .app > main {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .doctor-page .content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* SIDEBAR — match the AI Health Check page */
+        .doctor-page .app > .sidebar {
+            flex: 0 0 260px;
+            width: 260px;
+            min-width: 260px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 26px 18px;
+            overflow-y: auto;
+            background: #103b29 !important;
+            color: #ffffff !important;
+            border-right: 1px solid #174c35;
+        }
+
+        .doctor-page .sidebar .logo {
+            display: flex;
+            align-items: center;
+            min-height: 54px;
+            margin: 0 8px 30px;
+        }
+
+        .doctor-page .sidebar .brand {
+            display: block;
+            width: 100%;
+        }
+
+        .doctor-page .sidebar .logo img {
+            display: block;
+            width: 165px;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .doctor-page .sidebar .nav-title {
+            margin: 0 10px 12px;
+            color: #d9eee0 !important;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .doctor-page .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin: 0 0 24px;
+            padding: 0;
+        }
+
+        .doctor-page .sidebar .nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            color: #ffffff !important;
+            background: transparent !important;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .doctor-page .sidebar .nav a:hover {
+            color: #ffffff !important;
+            background: #174c35 !important;
+        }
+
+        .doctor-page .sidebar .nav a.active {
+            color: #ffffff !important;
+            background: #23734d !important;
+            border-color: rgba(255, 255, 255, .1);
+            font-weight: 700;
+        }
+
+        .doctor-page .sidebar .nav a span {
+            color: inherit !important;
+        }
+
+        /* HEADER — same white header style as AI Health Check */
+        .doctor-page main > header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 18px 30px;
+            border-bottom: 1px solid var(--doctor-border);
+            background: rgba(255, 255, 255, .94);
+        }
+
+        .doctor-page main > header h3 {
+            margin: 0;
+            color: var(--doctor-ink);
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .doctor-page .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--doctor-border);
+            border-radius: 12px;
+            background: #ffffff;
+        }
+
+        .doctor-page .language-selector select {
+            border: 0;
+            outline: none;
+            color: var(--doctor-ink);
+            background: transparent;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .doctor-hero {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            padding: 34px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 24px;
+            color: #ffffff;
+            background: linear-gradient(125deg, #153f2b 0%, #23734d 58%, #4b9167 100%);
+            box-shadow: 0 14px 35px rgba(23, 59, 44, .12);
+        }
+
+        .doctor-hero::before,
+        .doctor-hero::after {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .07);
+            content: "";
+            pointer-events: none;
+        }
+
+        .doctor-hero::before {
+            top: -130px;
+            right: 100px;
+            width: 270px;
+            height: 270px;
+        }
+
+        .doctor-hero::after {
+            right: -80px;
+            bottom: -155px;
+            width: 330px;
+            height: 330px;
+        }
+
+        .doctor-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-copy {
+            max-width: 680px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #d9f0df;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+        }
+
+        .doctor-hero h1 {
+            margin: 12px 0 10px;
+            font-family: "Manrope", sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.65rem);
+            font-weight: 800;
+            letter-spacing: -.045em;
+            line-height: 1.15;
+        }
+
+        .doctor-hero h1 span {
+            color: #bde8c7;
+        }
+
+        .doctor-hero p {
+            max-width: 600px;
+            margin: 0;
+            color: rgba(255, 255, 255, .86);
+            line-height: 1.75;
+        }
+
+        .hero-icon {
+            display: grid;
+            flex: 0 0 82px;
+            width: 82px;
+            height: 82px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, .23);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, .13);
+            font-size: 2.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        /* SEARCH CARD */
+        .search-card {
+            margin-bottom: 28px;
+            padding: 24px;
+            border: 1px solid var(--doctor-border);
+            border-radius: 20px;
+            background: var(--doctor-white);
+            box-shadow: var(--doctor-shadow);
+        }
+
+        .section-title {
+            margin: 0;
+            color: var(--doctor-ink);
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .section-description {
+            margin: 7px 0 20px;
+            color: var(--doctor-muted);
+            font-size: .88rem;
+            line-height: 1.6;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(180px, 1fr) auto;
+            gap: 12px;
+        }
+
+        .search-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            min-height: 49px;
+            padding: 0 13px;
+            border: 1px solid #dce6dd;
+            border-radius: 11px;
+            background: #fbfdfb;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .search-field:focus-within {
+            border-color: #6c9c79;
+            box-shadow: 0 0 0 3px rgba(35, 115, 77, .1);
+        }
+
+        .search-field .field-icon {
+            flex: 0 0 auto;
+            color: var(--doctor-green);
+            font-size: 1.15rem;
+        }
+
+        .search-field input,
+        .search-field select {
+            width: 100%;
+            min-width: 0;
+            min-height: 45px;
+            border: 0;
+            outline: none;
+            background: transparent;
+            color: var(--doctor-ink);
+            font-size: .88rem;
+        }
+
+        .search-field input::placeholder {
+            color: #9aa89f;
+        }
+
+        .primary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 49px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2c8054, #185a38);
+            color: #ffffff;
+            font-size: .88rem;
+            font-weight: 750;
+            box-shadow: 0 7px 17px rgba(35, 115, 77, .15);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(35, 115, 77, .22);
+        }
+
+        /* SECTION HEADINGS */
+        .page-section {
+            margin-bottom: 30px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            color: var(--doctor-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -.025em;
+        }
+
+        .section-heading p {
+            margin: 6px 0 0;
+            color: var(--doctor-muted);
+            font-size: .86rem;
+            line-height: 1.6;
+        }
+
+        .text-button {
+            flex: 0 0 auto;
+            padding: 8px 0 8px 8px;
+            border: 0;
+            background: transparent;
+            color: var(--doctor-green);
+            font-size: .84rem;
+            font-weight: 750;
+        }
+
+        .text-button:hover {
+            color: var(--doctor-green-dark);
+            text-decoration: underline;
+        }
+
+        /* SPECIALTY CARDS */
+        .specialty-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .specialty-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            padding: 16px 13px;
+            border: 1px solid var(--doctor-border);
+            border-radius: 16px;
+            background: #ffffff;
+            text-align: left;
+            transition: transform .2s, border-color .2s, box-shadow .2s;
+        }
+
+        .specialty-card:hover,
+        .specialty-card.selected {
+            transform: translateY(-2px);
+            border-color: #8ab59a;
+            box-shadow: 0 8px 22px rgba(23, 59, 44, .07);
+        }
+
+        .specialty-card.selected {
+            background: #f2f8f2;
+        }
+
+        .specialty-icon {
+            display: grid;
+            flex: 0 0 44px;
+            width: 44px;
+            height: 44px;
+            place-items: center;
+            border-radius: 13px;
+            background: #eaf4ed;
+            font-size: 1.35rem;
+        }
+
+        .specialty-card:nth-child(2) .specialty-icon {
+            background: #eaf1fb;
+        }
+
+        .specialty-card:nth-child(3) .specialty-icon {
+            background: #f9efe4;
+        }
+
+        .specialty-card:nth-child(4) .specialty-icon {
+            background: #f3eafa;
+        }
+
+        .specialty-info {
+            min-width: 0;
+        }
+
+        .specialty-name {
+            display: block;
+            color: var(--doctor-ink);
+            font-size: .83rem;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .specialty-description {
+            display: block;
+            margin-top: 4px;
+            color: var(--doctor-muted);
+            font-size: .72rem;
+            line-height: 1.4;
+        }
+
+        /* DOCTOR CARDS */
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .doctor-card {
+            min-width: 0;
+            padding: 21px;
+            border: 1px solid var(--doctor-border);
+            border-radius: 19px;
+            background: #ffffff;
+            box-shadow: 0 7px 23px rgba(23, 59, 44, .035);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(23, 59, 44, .08);
+        }
+
+        .doctor-card[hidden] {
+            display: none !important;
+        }
+
+        .doctor-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .doctor-avatar {
+            display: grid;
+            flex: 0 0 68px;
+            width: 68px;
+            height: 68px;
+            place-items: center;
+            border: 1px solid #deeee1;
+            border-radius: 18px;
+            background: #eaf4ed;
+            font-size: 2rem;
+        }
+
+        .doctor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doctor-info h3 {
+            margin: 2px 0 6px;
+            color: var(--doctor-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+
+        .doctor-specialty {
+            margin: 0 0 7px;
+            color: var(--doctor-green);
+            font-size: .85rem;
+            font-weight: 700;
+        }
+
+        .doctor-rating {
+            color: #b77c16;
+            font-size: .81rem;
+            font-weight: 800;
+        }
+
+        .doctor-rating span {
+            color: var(--doctor-muted);
+            font-weight: 400;
+        }
+
+        .availability {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 13px;
+            padding: 7px 9px;
+            border-radius: 8px;
+            background: #edf8ef;
+            color: #2b8550;
+            font-size: .7rem;
+            font-weight: 750;
+            line-height: 1.4;
+        }
+
+        .availability::before {
+            flex: 0 0 6px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #35a66b;
+            content: "";
+        }
+
+        .doctor-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            padding: 15px 0;
+            margin-top: 17px;
+            border-top: 1px solid #edf1ed;
+            color: var(--doctor-muted);
+            font-size: .77rem;
+        }
+
+        .doctor-details span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .doctor-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 14px;
+            border-top: 1px solid #edf1ed;
+        }
+
+        .fee-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--doctor-muted);
+            font-size: .72rem;
+        }
+
+        .fee {
+            color: var(--doctor-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .fee small {
+            color: var(--doctor-muted);
+            font-family: "DM Sans", sans-serif;
+            font-size: .72rem;
+            font-weight: 400;
+        }
+
+        .book-button {
+            min-height: 41px;
+            padding: 0 14px;
+            border: 1px solid var(--doctor-green);
+            border-radius: 10px;
+            background: var(--doctor-green);
+            color: #ffffff;
+            font-size: .78rem;
+            font-weight: 750;
+            transition: background .2s, transform .2s;
+        }
+
+        .book-button:hover {
+            transform: translateY(-1px);
+            background: var(--doctor-green-dark);
+        }
+
+        .empty-state {
+            display: none;
+            padding: 35px 20px;
+            border: 1px dashed #cbd9cd;
+            border-radius: 16px;
+            background: #ffffff;
+            color: var(--doctor-muted);
+            text-align: center;
+            font-size: .9rem;
+            line-height: 1.7;
+        }
+
+        .demo-note {
+            margin: 18px 0 0;
+            color: #89958d;
+            font-size: .76rem;
+            line-height: 1.7;
+        }
+
+        .doctor-page :focus-visible {
+            outline: 3px solid #76a988;
+            outline-offset: 3px;
+        }
+
+        /* TABLET */
+        @media (max-width: 1100px) {
+            .doctor-page .app > .sidebar {
+                flex-basis: 235px;
+                width: 235px;
+                min-width: 235px;
+            }
+
+            .doctor-page .content {
+                padding: 24px;
+            }
+
+            .search-form {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            }
+
+            .search-button {
+                grid-column: 1 / -1;
+            }
+
+            .specialty-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 850px) {
+            .doctor-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* MOBILE */
+        @media (max-width: 650px) {
+            .doctor-page .app {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .doctor-page .app > .sidebar {
+                position: relative;
+                flex: 0 0 auto;
+                width: 100%;
+                min-width: 0;
+                min-height: auto;
+                padding: 16px;
+                border-right: 0;
+                border-radius: 0 0 18px 18px;
+                background: #103b29 !important;
+            }
+
+            .doctor-page .sidebar .logo {
+                min-height: 42px;
+                margin: 0 4px 17px;
+            }
+
+            .doctor-page .sidebar .logo img {
+                width: 145px;
+            }
+
+            .doctor-page .sidebar .nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 7px;
+                margin-bottom: 16px;
+            }
+
+            .doctor-page .sidebar .nav a {
+                width: auto;
+                min-height: 40px;
+                padding: 9px 11px;
+                font-size: .75rem;
+            }
+
+            .doctor-page .sidebar .nav-title {
+                margin: 0 6px 10px;
+            }
+
+            .doctor-page main > header {
+                padding: 15px 17px;
+            }
+
+            .doctor-page main > header h3 {
+                font-size: 1.05rem;
+            }
+
+            .doctor-page .content {
+                padding: 19px 14px;
+            }
+
+            .doctor-hero {
+                gap: 12px;
+                padding: 24px 20px;
+                border-radius: 19px;
+            }
+
+            .doctor-hero h1 {
+                font-size: 1.85rem;
+            }
+
+            .doctor-hero p {
+                font-size: .9rem;
+            }
+
+            .hero-icon {
+                flex-basis: 54px;
+                width: 54px;
+                height: 54px;
+                border-radius: 17px;
+                font-size: 1.7rem;
+            }
+
+            .search-card {
+                padding: 19px;
+                border-radius: 17px;
+            }
+
+            .search-form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .search-button {
+                grid-column: auto;
+                width: 100%;
+            }
+
+            .specialty-grid {
+                gap: 10px;
+            }
+
+            .specialty-card {
+                gap: 8px;
+                padding: 12px 9px;
+            }
+
+            .specialty-icon {
+                flex-basis: 36px;
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+
+            .specialty-name {
+                font-size: .76rem;
+            }
+
+            .specialty-description {
+                font-size: .67rem;
+            }
+
+            .section-heading h2 {
+                font-size: 1.08rem;
+            }
+
+            .section-heading p {
+                font-size: .8rem;
+            }
+
+            .doctor-card {
+                padding: 17px;
+                border-radius: 16px;
+            }
+
+            .doctor-avatar {
+                flex-basis: 56px;
+                width: 56px;
+                height: 56px;
+                font-size: 1.6rem;
+            }
+
+            .doctor-info h3 {
+                font-size: .94rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .doctor-hero {
+                padding: 20px 16px;
+            }
+
+            .doctor-hero h1 {
+                font-size: 1.55rem;
+            }
+
+            .hero-icon {
+                flex-basis: 44px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.35rem;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+            }
+
+            .specialty-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .specialty-card {
+                padding: 12px;
+            }
+
+            .doctor-footer {
+                align-items: flex-start;
+            }
+
+            .book-button {
+                padding: 0 11px;
+                font-size: .73rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="doctor-page">
+<div class="app">
+
+    <!-- SAME SIDEBAR AND MENU AS AI HEALTH CHECK -->
+    <aside class="sidebar" aria-label="Sidebar">
+        <a class="brand" href="welcome.html" aria-label="Medi AI home">
+            <div class="logo">
+                 <img src="download.png" alt="Medi AI logo" width="165">
+            </div>
+        </a>
+
+        <p class="nav-title" data-i18n="main">MAIN MENU</p>
+
+        <nav class="nav" aria-label="Main navigation">
+            <a href="index.html">
+                🏠 <span data-i18n="dashboard">Dashboard</span>
+            </a>
+
+            <a href="ai-health-check.html">
+                🩺 <span data-i18n="aiHealthCheck">AI Health Check</span>
+            </a>
+
+            <a href="consultations.html">
+                👨‍⚕️ <span data-i18n="consultations">Consultations</span>
+            </a>
+
+            <a href="medical-records.html">
+                📋 <span data-i18n="medicalRecords">Medical Records</span>
+            </a>
+
+            <a href="health-tracking.html">
+                📊 <span data-i18n="healthTracking">Health Tracking</span>
+            </a>
+
+            <a href="find-doctor.html" class="active" aria-current="page">
+                📍 <span data-i18n="findDoctor">Find a Doctor</span>
+            </a>
+        </nav>
+
+        <p class="nav-title" data-i18n="account">ACCOUNT</p>
+
+        <nav class="nav" aria-label="Account navigation">
+            <a href="settings.html">
+                ⚙️ <span data-i18n="settings">Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- RIGHT MAIN PAGE -->
+    <main>
+        <header>
+            <div>
+                <h3 data-i18n="findDoctor">Find a Doctor</h3>
+            </div>
+
+            <div class="language-selector">
+                <span aria-hidden="true">🌐</span>
+                <select id="languageSelect" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="gu">ગુજરાતી</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="content">
+            <!-- HERO -->
+            <section class="doctor-hero">
+                <div class="hero-copy">
+                    <span class="hero-eyebrow">✦ &nbsp; PERSONALIZED HEALTHCARE</span>
+                    <h1>Find the right care.<br><span>Feel better sooner.</span></h1>
+                    <p>
+                        Discover a specialist for your needs and take the next step
+                        towards better health with Medi AI. Explore specialties and
+                        browse sample doctor profiles.
+                    </p>
+                </div>
+                <div class="hero-icon" aria-hidden="true">🩺</div>
+            </section>
+
+            <!-- DOCTOR SEARCH -->
+            <section class="search-card" aria-labelledby="searchHeading">
+                <h2 class="section-title" id="searchHeading">Search for your doctor</h2>
+                <p class="section-description">
+                    Search by doctor name or choose the specialty you need.
+                </p>
+
+                <form class="search-form" id="doctorSearchForm">
+                    <label class="search-field">
+                        <span class="field-icon" aria-hidden="true">⌕</span>
+                        <input
+                            type="search"
+                            id="doctorSearch"
+                            name="doctorSearch"
+                            placeholder="Doctor name or specialty"
+                            aria-label="Doctor name or specialty"
+                        >
+                    </label>
+
+                    <label class="search-field">
+                        <span class="field-icon" aria-hidden="true">⚕</span>
+                        <select id="specialtyFilter" name="specialty" aria-label="Filter by specialty">
+                            <option value="">All specialties</option>
+                            <option value="Cardiologist">Cardiology</option>
+                            <option value="Dermatologist">Dermatology</option>
+                            <option value="Pediatrician">Pediatrics</option>
+                            <option value="Neurologist">Neurology</option>
+                        </select>
+                    </label>
+
+                    <button class="primary-button" type="submit">
+                        Search doctors <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- SPECIALTIES -->
+            <section class="page-section" aria-labelledby="specialtyHeading">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="specialtyHeading">Browse by specialty</h2>
+                        <p>Choose the type of care you're looking for.</p>
+                    </div>
+                    <button class="text-button" id="showAllSpecialties" type="button">View all</button>
+                </div>
+
+                <div class="specialty-grid">
+                    <button class="specialty-card" type="button" data-specialty="Cardiologist" aria-pressed="false">
+                        <span class="specialty-icon" aria-hidden="true">❤️</span>
+                        <span class="specialty-info">
+                            <span class="specialty-name">Cardiology</span>
+                            <span class="specialty-description">Heart health</span>
+                        </span>
+                    </button>
+
+                    <button class="specialty-card" type="button" data-specialty="Dermatologist" aria-pressed="false">
+                        <span class="specialty-icon" aria-hidden="true">☀️</span>
+                        <span class="specialty-info">
+                            <span class="specialty-name">Dermatology</span>
+                            <span class="specialty-description">Skin care</span>
+                        </span>
+                    </button>
+
+                    <button class="specialty-card" type="button" data-specialty="Pediatrician" aria-pressed="false">
+                        <span class="specialty-icon" aria-hidden="true">🧸</span>
+                        <span class="specialty-info">
+                            <span class="specialty-name">Pediatrics</span>
+                            <span class="specialty-description">Child health</span>
+                        </span>
+                    </button>
+
+                    <button class="specialty-card" type="button" data-specialty="Neurologist" aria-pressed="false">
+                        <span class="specialty-icon" aria-hidden="true">🧠</span>
+                        <span class="specialty-info">
+                            <span class="specialty-name">Neurology</span>
+                            <span class="specialty-description">Brain and nerves</span>
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- DOCTOR LIST -->
+            <section class="page-section" aria-labelledby="doctorHeading">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="doctorHeading">Doctors for you</h2>
+                        <p id="resultsText" aria-live="polite">Explore our sample doctor profiles.</p>
+                    </div>
+                    <button class="text-button" id="clearFilters" type="button">Clear filters</button>
+                </div>
+
+                <div class="doctor-grid" id="doctorGrid">
+                    <article class="doctor-card" data-name="Aarav Mehta" data-specialty="Cardiologist">
+                        <div class="doctor-top">
+                            <div class="doctor-avatar" aria-hidden="true">👨🏻‍⚕️</div>
+                            <div class="doctor-info">
+                                <h3>Dr. Aarav Mehta</h3>
+                                <p class="doctor-specialty">Cardiologist</p>
+                                <div class="doctor-rating">★ 4.9 <span>· Sample rating</span></div>
+                                <span class="availability">Availability to be confirmed</span>
+                            </div>
+                        </div>
+                        <div class="doctor-details">
+                            <span>✚ Heart health</span>
+                            <span>◷ 10+ years' experience</span>
+                        </div>
+                        <div class="doctor-footer">
+                            <div>
+                                <span class="fee-label">Consultation fee</span>
+                                <div class="fee">₹500 <small>/ visit</small></div>
+                            </div>
+                            <button class="book-button" type="button" data-consult-doctor="Aarav Mehta">View profile</button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-name="Ananya Shah" data-specialty="Dermatologist">
+                        <div class="doctor-top">
+                            <div class="doctor-avatar" aria-hidden="true">👩🏻‍⚕️</div>
+                            <div class="doctor-info">
+                                <h3>Dr. Ananya Shah</h3>
+                                <p class="doctor-specialty">Dermatologist</p>
+                                <div class="doctor-rating">★ 4.8 <span>· Sample rating</span></div>
+                                <span class="availability">Availability to be confirmed</span>
+                            </div>
+                        </div>
+                        <div class="doctor-details">
+                            <span>✚ Skin care</span>
+                            <span>◷ 8+ years' experience</span>
+                        </div>
+                        <div class="doctor-footer">
+                            <div>
+                                <span class="fee-label">Consultation fee</span>
+                                <div class="fee">₹400 <small>/ visit</small></div>
+                            </div>
+                            <button class="book-button" type="button" data-consult-doctor="Ananya Shah">View profile</button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-name="Rohan Patel" data-specialty="Pediatrician">
+                        <div class="doctor-top">
+                            <div class="doctor-avatar" aria-hidden="true">👨🏽‍⚕️</div>
+                            <div class="doctor-info">
+                                <h3>Dr. Rohan Patel</h3>
+                                <p class="doctor-specialty">Pediatrician</p>
+                                <div class="doctor-rating">★ 4.9 <span>· Sample rating</span></div>
+                                <span class="availability">Availability to be confirmed</span>
+                            </div>
+                        </div>
+                        <div class="doctor-details">
+                            <span>✚ Child health</span>
+                            <span>◷ 9+ years' experience</span>
+                        </div>
+                        <div class="doctor-footer">
+                            <div>
+                                <span class="fee-label">Consultation fee</span>
+                                <div class="fee">₹350 <small>/ visit</small></div>
+                            </div>
+                            <button class="book-button" type="button" data-consult-doctor="Rohan Patel">View profile</button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-name="Isha Desai" data-specialty="Neurologist">
+                        <div class="doctor-top">
+                            <div class="doctor-avatar" aria-hidden="true">👩🏽‍⚕️</div>
+                            <div class="doctor-info">
+                                <h3>Dr. Isha Desai</h3>
+                                <p class="doctor-specialty">Neurologist</p>
+                                <div class="doctor-rating">★ 4.7 <span>· Sample rating</span></div>
+                                <span class="availability">Availability to be confirmed</span>
+                            </div>
+                        </div>
+                        <div class="doctor-details">
+                            <span>✚ Brain and nerves</span>
+                            <span>◷ 7+ years' experience</span>
+                        </div>
+                        <div class="doctor-footer">
+                            <div>
+                                <span class="fee-label">Consultation fee</span>
+                                <div class="fee">₹600 <small>/ visit</small></div>
+                            </div>
+                            <button class="book-button" type="button" data-consult-doctor="Isha Desai">View profile</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="empty-state" id="emptyState" role="status">
+                    No matching sample doctors found. Try another name or specialty.
+                </div>
+
+                <p class="demo-note">
+                    Demo content: doctor names, fees, experience, and ratings are illustrative placeholders,
+                    not verified medical listings. Confirm credentials, consultation fees, and availability before booking.
+                </p>
+            </section>
+        </section>
+    </main>
+</div>
+
+<!-- Existing project scripts -->
+<script src="js/app.js"></script>
+<script src="js/i18n.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("doctorSearch");
+    const specialtyFilter = document.getElementById("specialtyFilter");
+    const searchForm = document.getElementById("doctorSearchForm");
+    const doctorCards = Array.from(document.querySelectorAll(".doctor-card"));
+    const specialtyCards = Array.from(document.querySelectorAll(".specialty-card"));
+    const emptyState = document.getElementById("emptyState");
+    const resultsText = document.getElementById("resultsText");
+
+    function filterDoctors() {
+        const query = searchInput.value.trim().toLowerCase();
+        const selectedSpecialty = specialtyFilter.value;
+        let visibleCount = 0;
+
+        doctorCards.forEach(function (card) {
+            const name = (card.dataset.name || "").toLowerCase();
+            const specialty = card.dataset.specialty || "";
+            const matchesQuery = name.includes(query) || specialty.toLowerCase().includes(query);
+            const matchesSpecialty = !selectedSpecialty || specialty === selectedSpecialty;
+            const visible = matchesQuery && matchesSpecialty;
+
+            card.hidden = !visible;
+            if (visible) visibleCount++;
+        });
+
+        emptyState.style.display = visibleCount === 0 ? "block" : "none";
+        resultsText.textContent = visibleCount +
+            (visibleCount === 1 ? " sample profile shown." : " sample profiles shown.");
+
+        specialtyCards.forEach(function (card) {
+            const selected = card.dataset.specialty === selectedSpecialty && selectedSpecialty !== "";
+            card.classList.toggle("selected", selected);
+            card.setAttribute("aria-pressed", String(selected));
+        });
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterDoctors();
+    });
+
+    searchInput.addEventListener("input", filterDoctors);
+    specialtyFilter.addEventListener("change", filterDoctors);
+
+    specialtyCards.forEach(function (card) {
+        card.addEventListener("click", function () {
+            const specialty = card.dataset.specialty;
+            specialtyFilter.value = specialtyFilter.value === specialty ? "" : specialty;
+            filterDoctors();
+        });
+    });
+
+    document.getElementById("showAllSpecialties").addEventListener("click", function () {
+        searchInput.value = "";
+        specialtyFilter.value = "";
+        filterDoctors();
+    });
+
+    document.getElementById("clearFilters").addEventListener("click", function () {
+        searchInput.value = "";
+        specialtyFilter.value = "";
+        filterDoctors();
+    });
+
+    filterDoctors();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f8f5">
+
+    <title>Medi AI — AI Health Check</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        :root {
+            --health-ink: #173b2c;
+            --health-muted: #718078;
+            --health-green: #23734d;
+            --health-green-dark: #164d34;
+            --health-mint: #eaf4ed;
+            --health-border: #e0e9e1;
+            --health-bg: #f4f8f5;
+            --health-white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body.health-page {
+            background: var(--health-bg);
+            color: var(--health-ink);
+        }
+
+        .health-page .app {
+            min-height: 100vh;
+        }
+
+        .health-page main {
+            min-width: 0;
+        }
+
+        .health-page .content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .health-page .sidebar .logo img {
+            display: block;
+            width: 165px;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .health-page .nav a {
+            border-radius: 12px;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .health-page .nav a.active {
+            color: var(--health-green-dark);
+            background: var(--health-mint);
+            font-weight: 700;
+        }
+
+        .health-page header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 18px 30px;
+            border-bottom: 1px solid var(--health-border);
+            background: rgba(255,255,255,.94);
+        }
+
+        .health-page header h3 {
+            margin: 0;
+            color: var(--health-ink);
+            font-size: 1.25rem;
+        }
+
+        .health-page .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--health-border);
+            border-radius: 12px;
+            background: white;
+        }
+
+        .health-page .language-selector select {
+            border: 0;
+            outline: none;
+            color: var(--health-ink);
+            background: transparent;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .health-hero {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            padding: 34px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 24px;
+            color: white;
+            background: linear-gradient(125deg, #153f2b 0%, #23734d 58%, #4b9167 100%);
+            box-shadow: 0 14px 35px rgba(23,59,44,.12);
+        }
+
+        .health-hero::before,
+        .health-hero::after {
+            position: absolute;
+            content: "";
+            border-radius: 50%;
+            background: rgba(255,255,255,.07);
+            pointer-events: none;
+        }
+
+        .health-hero::before {
+            top: -130px;
+            right: 100px;
+            width: 270px;
+            height: 270px;
+        }
+
+        .health-hero::after {
+            right: -80px;
+            bottom: -155px;
+            width: 330px;
+            height: 330px;
+        }
+
+        .health-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #d9f0df;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+        }
+
+        .health-hero h1 {
+            margin: 12px 0 10px;
+            font-size: clamp(1.8rem, 4vw, 2.65rem);
+            font-weight: 800;
+            letter-spacing: -.045em;
+            line-height: 1.15;
+        }
+
+        .health-hero p {
+            max-width: 640px;
+            margin: 0;
+            color: rgba(255,255,255,.86);
+            line-height: 1.75;
+        }
+
+        .hero-icon {
+            display: grid;
+            flex: 0 0 82px;
+            width: 82px;
+            height: 82px;
+            place-items: center;
+            border: 1px solid rgba(255,255,255,.23);
+            border-radius: 25px;
+            background: rgba(255,255,255,.13);
+            font-size: 2.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .check-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(250px, .75fr);
+            align-items: start;
+            gap: 22px;
+        }
+
+        .health-card {
+            min-width: 0;
+            padding: 25px;
+            border: 1px solid var(--health-border);
+            border-radius: 20px;
+            background: var(--health-white);
+            box-shadow: 0 8px 26px rgba(23,59,44,.045);
+        }
+
+        .form-intro {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #edf1ed;
+        }
+
+        .form-intro h2,
+        .side-card h2 {
+            margin: 0;
+            color: var(--health-ink);
+            font-size: 1.12rem;
+            font-weight: 800;
+        }
+
+        .form-intro p {
+            margin: 7px 0 0;
+            color: var(--health-muted);
+            font-size: .88rem;
+            line-height: 1.5;
+        }
+
+        .form-progress {
+            flex: 0 0 150px;
+            color: var(--health-muted);
+            font-size: .75rem;
+            text-align: right;
+        }
+
+        .progress-track {
+            height: 6px;
+            margin-top: 9px;
+            overflow: hidden;
+            border-radius: 99px;
+            background: #eaf0eb;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #23734d, #69a67a);
+            transition: width .25s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px 17px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--health-ink);
+            font-size: .86rem;
+            font-weight: 750;
+        }
+
+        .optional-label {
+            margin-left: 4px;
+            color: #87948c;
+            font-size: .76rem;
+            font-weight: 400;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            padding: 12px 13px;
+            border: 1px solid #dce6dd;
+            border-radius: 11px;
+            outline: none;
+            color: var(--health-ink);
+            background: #fbfdfb;
+            font: inherit;
+            font-size: .9rem;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+
+        .field input,
+        .field select {
+            min-height: 46px;
+        }
+
+        .field textarea {
+            min-height: 95px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: #a0aaa3;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: #6c9c79;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(35,115,77,.1);
+        }
+
+        .field-hint {
+            display: block;
+            margin-top: 7px;
+            color: var(--health-muted);
+            font-size: .76rem;
+            line-height: 1.55;
+        }
+
+        .unit-control {
+            display: flex;
+            gap: 7px;
+            margin-bottom: 9px;
+        }
+
+        .unit-button,
+        .symptom-chip {
+            border: 1px solid var(--health-border);
+            border-radius: 999px;
+            color: var(--health-muted);
+            background: #fff;
+            cursor: pointer;
+            font: inherit;
+            transition: .2s ease;
+        }
+
+        .unit-button {
+            min-width: 43px;
+            padding: 6px 12px;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        .unit-button[aria-pressed="true"],
+        .symptom-chip[aria-pressed="true"] {
+            border-color: #8ab59a;
+            color: #205d3b;
+            background: var(--health-mint);
+        }
+
+        .unit-button:hover,
+        .symptom-chip:hover {
+            border-color: #6c9c79;
+        }
+
+        .symptom-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 12px;
+        }
+
+        .symptom-chip {
+            padding: 8px 12px;
+            font-size: .8rem;
+        }
+
+        .symptom-chip[aria-pressed="true"] {
+            font-weight: 700;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #edf1ed;
+        }
+
+        .health-submit {
+            display: inline-flex;
+            min-height: 47px;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 0 19px;
+            border: 0;
+            border-radius: 12px;
+            color: white;
+            background: linear-gradient(135deg, #2c8054, #185a38);
+            box-shadow: 0 7px 17px rgba(35,115,77,.17);
+            cursor: pointer;
+            font: inherit;
+            font-size: .88rem;
+            font-weight: 750;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .health-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(35,115,77,.23);
+        }
+
+        .clear-button {
+            min-height: 42px;
+            padding: 9px 12px;
+            border: 0;
+            border-radius: 10px;
+            color: var(--health-muted);
+            background: transparent;
+            cursor: pointer;
+            font: inherit;
+            font-size: .86rem;
+        }
+
+        .clear-button:hover {
+            color: var(--health-ink);
+            background: #f2f6f2;
+        }
+
+        .side-card + .side-card {
+            margin-top: 18px;
+        }
+
+        .side-card h2 {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 13px;
+        }
+
+        .side-card .side-icon {
+            display: grid;
+            flex: 0 0 36px;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            border-radius: 11px;
+            background: var(--health-mint);
+            font-size: 1rem;
+        }
+
+        .side-card p,
+        .side-card li {
+            color: var(--health-muted);
+            font-size: .85rem;
+            line-height: 1.7;
+        }
+
+        .side-card ul {
+            display: grid;
+            gap: 9px;
+            padding-left: 19px;
+            margin: 12px 0 0;
+        }
+
+        .tip-box {
+            margin-top: 17px;
+            padding: 13px;
+            border: 1px solid #e1eee3;
+            border-radius: 12px;
+            color: #496b53;
+            background: #f2f8f2;
+            font-size: .81rem;
+            line-height: 1.65;
+        }
+
+        .ai-result {
+            display: none;
+            margin-top: 22px;
+            scroll-margin-top: 25px;
+            animation: appear .3s ease both;
+        }
+
+        .ai-result.visible {
+            display: block;
+        }
+
+        .result-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 17px;
+        }
+
+        .result-heading h2 {
+            margin: 0;
+            color: var(--health-ink);
+            font-size: 1.2rem;
+        }
+
+        .result-icon {
+            display: grid;
+            flex: 0 0 45px;
+            width: 45px;
+            height: 45px;
+            place-items: center;
+            border-radius: 14px;
+            background: var(--health-mint);
+            font-size: 1.3rem;
+        }
+
+        .result-content {
+            color: #52675b;
+            font-size: .91rem;
+            line-height: 1.75;
+            overflow-wrap: anywhere;
+        }
+
+        .result-content ul {
+            display: grid;
+            gap: 8px;
+            padding-left: 22px;
+        }
+
+        .notice {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #f0e2bd;
+            border-left: 4px solid #d6a33b;
+            border-radius: 11px;
+            color: #725a2c;
+            background: #fff9eb;
+            font-size: .85rem;
+            line-height: 1.65;
+        }
+
+        .notice p {
+            margin: 5px 0 0;
+        }
+
+        .urgent-note {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #efc5c5;
+            border-radius: 12px;
+            color: #7d2828;
+            background: #fff1f1;
+            font-size: .9rem;
+            line-height: 1.65;
+        }
+
+        .urgent-note.visible {
+            display: block;
+        }
+
+        :focus-visible {
+            outline: 3px solid #76a988;
+            outline-offset: 3px;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 950px) {
+            .check-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-column {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                align-items: start;
+                gap: 18px;
+            }
+
+            .side-card + .side-card {
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .health-page header {
+                padding: 15px 17px;
+            }
+
+            .health-page .content {
+                padding: 19px 14px;
+            }
+
+            .health-hero {
+                padding: 24px 21px;
+                border-radius: 19px;
+            }
+
+            .health-hero h1 {
+                font-size: 1.85rem;
+            }
+
+            .hero-icon {
+                flex-basis: 54px;
+                width: 54px;
+                height: 54px;
+                border-radius: 17px;
+                font-size: 1.7rem;
+            }
+
+            .health-card {
+                padding: 19px;
+                border-radius: 17px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .form-intro {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .form-progress {
+                width: 100%;
+                flex-basis: auto;
+                text-align: left;
+            }
+
+            .side-column {
+                grid-template-columns: 1fr;
+            }
+
+            .health-submit {
+                width: 100%;
+            }
+
+            .clear-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .health-hero {
+                gap: 12px;
+                padding: 20px 16px;
+            }
+
+            .hero-icon {
+                flex-basis: 45px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.4rem;
+            }
+
+            .health-hero h1 {
+                font-size: 1.55rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+
+
+/* Forest green main menu */
+.health-page .sidebar {
+    background: var(--forest, #103b29) !important;
+    border-right: 1px solid var(--forest-light, #174c35);
+}
+
+/* Main Menu and Account headings */
+.health-page .sidebar .nav-title {
+    color: var(--mint, #d9eee0) !important;
+}
+
+/* Navigation links */
+.health-page .sidebar .nav a {
+    color: var(--white, #ffffff) !important;
+    background: transparent !important;
+}
+
+/* Hover effect */
+.health-page .sidebar .nav a:hover {
+    color: var(--white, #ffffff) !important;
+    background: var(--forest-light, #174c35) !important;
+}
+
+/* Active menu item */
+.health-page .sidebar .nav a.active {
+    color: var(--white, #ffffff) !important;
+    background: var(--green, #23734d) !important;
+    font-weight: 700;
+    border-radius: 12px;
+}
+
+/* Menu icons */
+.health-page .sidebar .nav a span {
+    color: var(--white, #ffffff) !important;
+}
+
+/* Sidebar bottom section, if present */
+.health-page .sidebar-bottom {
+    color: var(--white, #ffffff);
+    background: var(--forest-light, #174c35);
+}
+
+.health-page .sidebar-bottom strong,
+.health-page .sidebar-bottom p {
+    color: var(--white, #ffffff);
+}
+
+    </style>
+</head>
+
+<body class="health-page">
+
+<div class="app">
+
+  
+<aside class="sidebar" aria-label="Sidebar">
+    <a class="brand" href="welcome.html" aria-label="Medi AI home">
+                 <div class="logo">
+                 
+     <img src="download.png" alt="Medi AI logo" alt="Mediai Logo" width="200">
+    <span></span>
+</div>
+    </a>
+
+    <p class="nav-title" data-i18n="main">MAIN MENU</p>
+
+    <nav class="nav" aria-label="Main navigation">
+        <a href="index.html">
+            🏠 <span data-i18n="dashboard">Dashboard</span>
+        </a>
+
+        <a href="ai-health-check.html"
+           class="active"
+           aria-current="page">
+            🩺 <span data-i18n="aiHealthCheck">AI Health Check</span>
+        </a>
+
+        <a href="consultations.html">
+            👨‍⚕️ <span data-i18n="consultations">Consultations</span>
+        </a>
+
+        <a href="medical-records.html">
+            📋 <span data-i18n="medicalRecords">Medical Records</span>
+        </a>
+
+        <a href="health-tracking.html">
+            📊 <span data-i18n="healthTracking">Health Tracking</span>
+        </a>
+
+        <a href="find-doctor.html">
+            📍 <span data-i18n="findDoctor">Find a Doctor</span>
+        </a>
+    </nav>
+
+    <p class="nav-title" data-i18n="account">ACCOUNT</p>
+
+    <nav class="nav" aria-label="Account navigation">
+        <a href="settings.html">
+            ⚙️ <span data-i18n="settings">Settings</span>
+        </a>
+    </nav>
+</aside>
+
+
+    <main>
+        <header>
+            <div>
+                <h3 data-i18n="aiHealthCheck">AI Health Check</h3>
+            </div>
+
+            <div class="language-selector">
+                <span aria-hidden="true">🌐</span>
+                <select id="languageSelect" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="gu">ગુજરાતી</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <section class="health-hero">
+                <div>
+                    <span class="hero-eyebrow" data-i18n="personalHealthCompanion">
+                        🩺 &nbsp; YOUR PERSONAL HEALTH COMPANION
+                    </span>
+
+                    <h1 data-i18n="letsCheckIn">Let’s check in with you.</h1>
+
+                    <p data-i18n="healthCheckIntro">
+                        Add a few details about how you’re feeling.
+                        Medi AI can organize what you share and help you
+                        prepare for a conversation with a clinician.
+                    </p>
+                </div>
+
+                <div class="hero-icon" aria-hidden="true">💚</div>
+            </section>
+
+            <div class="check-layout">
+
+                <section class="health-card">
+                    <div class="form-intro">
+                        <div>
+                            <h2 data-i18n="yourHealthDetails">Your health details</h2>
+                            <p data-i18n="shareComfortably">
+                                Only share what you’re comfortable sharing.
+                            </p>
+                        </div>
+
+                        <div class="form-progress">
+                            <span id="progressText" aria-live="polite">
+                                0 of 3 sections complete
+                            </span>
+                            <div class="progress-track" aria-hidden="true">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="healthForm">
+                        <div class="form-grid">
+
+                            <div class="field">
+                                <label for="age">
+                                    <span data-i18n="age">Age</span>
+                                    <span class="optional-label" data-i18n="optional">(optional)</span>
+                                </label>
+                                <input
+                                    id="age"
+                                    name="age"
+                                    type="number"
+                                    min="1"
+                                    max="120"
+                                    placeholder="e.g. 35"
+                                    data-i18n-placeholder="agePlaceholder"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="gender">
+                                    <span data-i18n="gender">Gender</span>
+                                    <span class="optional-label" data-i18n="optional">(optional)</span>
+                                </label>
+                                <select id="gender" name="gender">
+                                    <option value="" data-i18n="preferNotToSay">Prefer not to say</option>
+                                    <option value="Male" data-i18n="male">Male</option>
+                                    <option value="Female" data-i18n="female">Female</option>
+                                    <option value="Other" data-i18n="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="temperature">
+                                    <span data-i18n="temperature">Temperature</span>
+                                    <span class="optional-label" data-i18n="optional">(optional)</span>
+                                </label>
+
+                                <div class="unit-control" aria-label="Temperature unit">
+                                    <button class="unit-button" type="button" data-unit="F" aria-pressed="true">°F</button>
+                                    <button class="unit-button" type="button" data-unit="C" aria-pressed="false">°C</button>
+                                </div>
+
+                                <input
+                                    id="temperature"
+                                    name="temperature"
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="e.g. 98.6"
+                                    data-i18n-placeholder="temperaturePlaceholder"
+                                >
+
+                                <small class="field-hint" id="temperatureHint" data-i18n="temperatureHint">
+                                    Enter the value shown by your thermometer in °F.
+                                </small>
+                            </div>
+
+                            <div class="field">
+                                <label for="bloodPressure">
+                                    <span data-i18n="bloodPressure">Blood pressure</span>
+                                    <span class="optional-label" data-i18n="optional">(optional)</span>
+                                </label>
+
+                                <input
+                                    id="bloodPressure"
+                                    name="bloodPressure"
+                                    type="text"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{2,3}\s*/\s*[0-9]{2,3}"
+                                    placeholder="e.g. 120/80"
+                                    data-i18n-placeholder="bloodPressurePlaceholder"
+                                    aria-describedby="bloodPressureHint"
+                                >
+
+                                <small class="field-hint" id="bloodPressureHint" data-i18n="bloodPressureHint">
+                                    If available, enter the reading as systolic/diastolic.
+                                </small>
+                            </div>
+
+                            <div class="field full">
+                                <label for="symptoms" data-i18n="experiencing">
+                                    What are you experiencing?
+                                </label>
+
+                                <div class="symptom-picker" aria-label="Quick symptom options">
+                                    <button class="symptom-chip" type="button" data-symptom="headache" aria-pressed="false" data-i18n="headache">Headache</button>
+                                    <button class="symptom-chip" type="button" data-symptom="fever" aria-pressed="false" data-i18n="fever">Fever</button>
+                                    <button class="symptom-chip" type="button" data-symptom="cough" aria-pressed="false" data-i18n="cough">Cough</button>
+                                    <button class="symptom-chip" type="button" data-symptom="nausea" aria-pressed="false" data-i18n="nausea">Nausea</button>
+                                    <button class="symptom-chip" type="button" data-symptom="fatigue" aria-pressed="false" data-i18n="fatigue">Fatigue</button>
+                                    <button class="symptom-chip" type="button" data-symptom="pain" aria-pressed="false" data-i18n="pain">Pain</button>
+                                </div>
+
+                                <textarea
+                                    id="symptoms"
+                                    name="symptoms"
+                                    rows="5"
+                                    required
+                                    placeholder="Describe your symptoms, when they started, and how they feel..."
+                                    data-i18n-placeholder="symptomsPlaceholder"
+                                ></textarea>
+
+                                <small class="field-hint" data-i18n="symptomsFrequency">
+                                    Include when symptoms began and how often they happen.
+                                </small>
+                            </div>
+
+                            <div class="field full">
+                                <label for="history">
+                                    <span data-i18n="medicalHistory">Relevant medical history</span>
+                                    <span class="optional-label" data-i18n="optional">(optional)</span>
+                                </label>
+
+                                <textarea
+                                    id="history"
+                                    name="history"
+                                    rows="3"
+                                    placeholder="Relevant conditions, medicines, or allergies..."
+                                    data-i18n-placeholder="historyPlaceholder"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="analyzeButton" class="health-submit">
+                                <span data-i18n="createSummary">Create my health summary</span>
+                                <span aria-hidden="true">→</span>
+                            </button>
+
+                            <button type="reset" id="clearButton" class="clear-button" data-i18n="clearForm">
+                                Clear form
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <aside class="side-column">
+                    <section class="health-card side-card">
+                        <h2>
+                            <span class="side-icon" aria-hidden="true">📝</span>
+                            <span data-i18n="helpfulDetails">Helpful details to include</span>
+                        </h2>
+
+                        <ul>
+                            <li data-i18n="symptomsBegan">When your symptoms began</li>
+                            <li data-i18n="symptomsFrequency">How often they happen</li>
+                            <li data-i18n="changesOverTime">Any changes over time</li>
+                            <li data-i18n="medicinesAllergies">Medicines or allergies that may matter</li>
+                        </ul>
+
+                        <div class="tip-box" data-i18n="usefulSummary">
+                            💡 A few clear details can make your health summary more useful.
+                        </div>
+                    </section>
+
+                    <section class="health-card side-card">
+                        <h2>
+                            <span class="side-icon" aria-hidden="true">🛡️</span>
+                            <span data-i18n="safetyFirst">Your safety comes first</span>
+                        </h2>
+
+                        <p data-i18n="safetyFirstDescription">
+                            This tool organizes information; it does not diagnose conditions.
+                            For urgent or life-threatening symptoms, contact local emergency services.
+                        </p>
+
+                        <div class="tip-box">
+                            If you think you may be experiencing a medical emergency, seek immediate medical help rather than waiting for this summary.
+                        </div>
+                    </section>
+                </aside>
+            </div>
+
+            <section
+                id="result"
+                class="health-card ai-result"
+                aria-live="polite"
+                aria-labelledby="resultTitle"
+                tabindex="-1"
+            >
+                <div class="result-heading">
+                    <div class="result-icon" aria-hidden="true">✨</div>
+                    <div>
+                        <h2 id="resultTitle" data-i18n="healthSummary">Your health summary</h2>
+                        <span class="field-hint" data-i18n="summaryBasedOnInfo">
+                            Based only on the information you entered
+                        </span>
+                    </div>
+                </div>
+
+                <div id="summary" class="result-content"></div>
+
+                <div id="urgentNote" class="urgent-note" role="alert"></div>
+
+                <div class="notice">
+                    <strong data-i18n="important">Important</strong>
+                    <p data-i18n="summaryDisclaimer">
+                        This summary is not a diagnosis or prescription.
+                        A qualified healthcare professional can assess your situation and advise you.
+                    </p>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/i18n.js" defer></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("healthForm");
+    const symptoms = document.getElementById("symptoms");
+    const result = document.getElementById("result");
+    const summary = document.getElementById("summary");
+    const urgentNote = document.getElementById("urgentNote");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    const temperature = document.getElementById("temperature");
+    const temperatureHint = document.getElementById("temperatureHint");
+    const languageSelect = document.getElementById("languageSelect");
+
+    let temperatureUnit = "F";
+
+    function getCurrentLanguage() {
+        return localStorage.getItem("mediAI-language") || "en";
+    }
+
+    function getText(key) {
+        const language = getCurrentLanguage();
+
+        if (
+            typeof translations !== "undefined" &&
+            translations[language] &&
+            translations[language][key]
+        ) {
+            return translations[language][key];
+        }
+
+        if (
+            typeof translations !== "undefined" &&
+            translations.en &&
+            translations.en[key]
+        ) {
+            return translations.en[key];
+        }
+
+        return key;
+    }
+
+    function updateTemperatureHint() {
+        if (!temperatureHint) return;
+
+        const translated = getText("temperatureHint");
+        temperatureHint.textContent =
+            `${translated.replace(/\s*°[FC]\.?\s*$/i, "").trim()} °${temperatureUnit}.`;
+    }
+
+    function updateProgress() {
+        const completed = [
+            document.getElementById("age").value.trim(),
+            document.getElementById("gender").value,
+            symptoms.value.trim()
+        ].filter(Boolean).length;
+
+        const progressTemplate = getText("progressText");
+
+        progressText.textContent = progressTemplate.includes("{completed}")
+            ? progressTemplate.replace("{completed}", completed)
+            : `${completed} of 3 sections complete`;
+
+        progressFill.style.width = `${(completed / 3) * 100}%`;
+    }
+
+    document.querySelectorAll(".unit-button").forEach(button => {
+        button.addEventListener("click", () => {
+            const nextUnit = button.dataset.unit;
+            const previousUnit = temperatureUnit;
+            const value = Number(temperature.value);
+
+            if (temperature.value.trim() !== "" && Number.isFinite(value)) {
+                if (previousUnit === "F" && nextUnit === "C") {
+                    temperature.value = ((value - 32) * 5 / 9).toFixed(1);
+                } else if (previousUnit === "C" && nextUnit === "F") {
+                    temperature.value = (value * 9 / 5 + 32).toFixed(1);
+                }
+            }
+
+            temperatureUnit = nextUnit;
+
+            document.querySelectorAll(".unit-button").forEach(item => {
+                item.setAttribute(
+                    "aria-pressed",
+                    String(item === button)
+                );
+            });
+
+            updateTemperatureHint();
+        });
+    });
+
+    document.querySelectorAll(".symptom-chip").forEach(button => {
+        button.addEventListener("click", () => {
+            const wasSelected = button.getAttribute("aria-pressed") === "true";
+            const key = button.dataset.symptom;
+            const label = getText(key);
+            const current = symptoms.value.trim();
+
+            button.setAttribute("aria-pressed", String(!wasSelected));
+
+            if (!wasSelected) {
+                const alreadyIncluded = current
+                    .toLocaleLowerCase()
+                    .includes(label.toLocaleLowerCase());
+
+                if (!alreadyIncluded) {
+                    symptoms.value = current
+                        ? `${current}${/[.!?]$/.test(current) ? " " : ", "}${label}`
+                        : label;
+                }
+            } else {
+                const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                const pattern = new RegExp(
+                    `(^|,\\s*)${escapedLabel}(?=\\s*(,|$))`,
+                    "i"
+                );
+
+                symptoms.value = current
+                    .replace(pattern, "")
+                    .replace(/,\s*,/g, ", ")
+                    .replace(/^\s*,\s*|\s*,\s*$/g, "")
+                    .trim();
+            }
+
+            updateProgress();
+        });
+    });
+
+    form.addEventListener("input", updateProgress);
+    form.addEventListener("change", updateProgress);
+
+    function addSummaryItem(list, label, value) {
+        if (!value) return;
+
+        const item = document.createElement("li");
+        const strong = document.createElement("strong");
+        strong.textContent = `${label}: `;
+        item.appendChild(strong);
+        item.appendChild(document.createTextNode(value));
+        list.appendChild(item);
+    }
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        if (!form.reportValidity()) return;
+
+        const age = document.getElementById("age").value.trim();
+        const gender = document.getElementById("gender").value;
+        const bloodPressure = document.getElementById("bloodPressure").value.trim();
+        const history = document.getElementById("history").value.trim();
+        const temperatureValue = temperature.value.trim();
+
+        summary.replaceChildren();
+
+        const intro = document.createElement("p");
+        intro.textContent = getText("summaryIntro");
+        summary.appendChild(intro);
+
+        const list = document.createElement("ul");
+
+        addSummaryItem(list, getText("symptoms"), symptoms.value.trim());
+        addSummaryItem(list, getText("age"), age);
+        addSummaryItem(list, getText("gender"), gender);
+
+        if (temperatureValue) {
+            addSummaryItem(
+                list,
+                getText("temperature"),
+                `${temperatureValue}°${temperatureUnit}`
+            );
+        }
+
+        addSummaryItem(list, getText("bloodPressure"), bloodPressure);
+        addSummaryItem(list, getText("medicalHistory"), history);
+
+        summary.appendChild(list);
+
+        const followUp = document.createElement("p");
+        followUp.textContent = getText("summaryFollowUp");
+        summary.appendChild(followUp);
+
+        /*
+         * This is a basic keyword alert, not a medical triage system.
+         * It cannot reliably identify or rule out an emergency.
+         */
+        const symptomText = symptoms.value.toLocaleLowerCase();
+
+        const urgentTerms = [
+            "chest pain",
+            "difficulty breathing",
+            "shortness of breath",
+            "can't breathe",
+            "cannot breathe",
+            "severe bleeding",
+            "unconscious",
+            "stroke symptoms",
+            "face drooping",
+            "sudden weakness",
+            "सीने में दर्द",
+            "सांस लेने में कठिनाई",
+            "सांस नहीं ले पा रहा",
+            "बेहोश",
+            "बहुत ज्यादा खून बहना",
+            "છાતીમાં દુખાવો",
+            "શ્વાસ લેવામાં તકલીફ",
+            "શ્વાસ લઈ શકાતો નથી",
+            "બેભાન",
+            "ખૂબ વધારે રક્તસ્ત્રાવ"
+        ];
+
+        const isUrgent = urgentTerms.some(term =>
+            symptomText.includes(term.toLocaleLowerCase())
+        );
+
+        if (isUrgent) {
+            urgentNote.textContent = getText("urgentMessage");
+            urgentNote.classList.add("visible");
+        } else {
+            urgentNote.textContent = "";
+            urgentNote.classList.remove("visible");
+        }
+
+        result.classList.add("visible");
+        result.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth",
+            block: "start"
+        });
+        result.focus({ preventScroll: true });
+    });
+
+    form.addEventListener("reset", () => {
+        window.setTimeout(() => {
+            temperatureUnit = "F";
+
+            document.querySelectorAll(".unit-button").forEach(button => {
+                button.setAttribute(
+                    "aria-pressed",
+                    String(button.dataset.unit === "F")
+                );
+            });
+
+            document.querySelectorAll(".symptom-chip").forEach(button => {
+                button.setAttribute("aria-pressed", "false");
+            });
+
+            urgentNote.textContent = "";
+            urgentNote.classList.remove("visible");
+            result.classList.remove("visible");
+
+            updateTemperatureHint();
+            updateProgress();
+        }, 0);
+    });
+
+    if (languageSelect) {
+        const savedLanguage = localStorage.getItem("mediAI-language");
+
+        if (savedLanguage && [...languageSelect.options].some(option => option.value === savedLanguage)) {
+            languageSelect.value = savedLanguage;
+        }
+
+        languageSelect.addEventListener("change", () => {
+            localStorage.setItem("mediAI-language", languageSelect.value);
+
+            /*
+             * app.js / i18n.js should apply translations to the page.
+             * Refresh these dynamic helper texts after that update.
+             */
+            window.setTimeout(() => {
+                updateTemperatureHint();
+                updateProgress();
+            }, 50);
+        });
+    }
+
+    updateTemperatureHint();
+    updateProgress();
+});
+</script>
+
+</body>
+</html>

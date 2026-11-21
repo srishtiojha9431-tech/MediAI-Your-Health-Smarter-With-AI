@@ -1,0 +1,1236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#174c35">
+<title>Medi AI | Health Tracking</title>
+
+<style>
+:root {
+    --forest: #174c35;
+    --dark: #103b29;
+    --green: #287650;
+    --sage: #e6f2e9;
+    --page: #f5f8f4;
+    --white: #ffffff;
+    --text: #24372d;
+    --muted: #7b8980;
+    --border: #e4ebe4;
+    --shadow: 0 8px 28px rgba(24,68,45,.06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button, input, select { font: inherit; }
+
+.app { min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 245px;
+    padding: 25px 17px;
+    background: var(--dark);
+    color: white;
+    overflow-y: auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 5px 8px 35px;
+}
+
+.logo-mark {
+    display: grid;
+    place-items: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    background: var(--sage);
+    color: var(--forest);
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.logo strong {
+    display: block;
+    font-size: 21px;
+}
+
+.logo small {
+    display: block;
+    margin-top: 4px;
+    color: #b5d0bd;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+.nav-title {
+    margin: 25px 12px 12px;
+    color: #a8c9b4;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.nav {
+    display: grid;
+    gap: 7px;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    border-radius: 11px;
+    color: #d9e8dd;
+    font-size: 13px;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.nav a:hover {
+    background: rgba(255,255,255,.1);
+    color: white;
+}
+
+.nav a.active {
+    background: var(--sage);
+    color: var(--dark);
+    font-weight: 700;
+}
+
+.nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+}
+
+/* MAIN AREA */
+main {
+    min-width: 0;
+    margin-left: 245px;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 80px;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.96);
+    backdrop-filter: blur(12px);
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    max-width: 420px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--page);
+    color: var(--green);
+}
+
+.search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 13px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 2px solid #d7e9dc;
+    border-radius: 50%;
+    background: var(--sage);
+    color: var(--forest);
+    font-weight: bold;
+}
+
+.profile strong, .profile small { display: block; }
+.profile strong { font-size: 13px; }
+.profile small {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+#languageSelect {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: white;
+    color: var(--forest);
+}
+
+/* CONTENT */
+.content {
+    max-width: 1500px;
+    margin: auto;
+    padding: 32px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.eyebrow {
+    margin-bottom: 8px;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+h1 {
+    margin: 0;
+    color: var(--dark);
+    font-size: clamp(27px, 3vw, 35px);
+    letter-spacing: -1px;
+}
+
+.page-header p {
+    margin: 9px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.date-chip {
+    padding: 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* WELCOME BANNER */
+.welcome-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 27px;
+    padding: 25px;
+    border-radius: 17px;
+    background: linear-gradient(115deg, #103b29, #287650);
+    color: white;
+    box-shadow: 0 10px 24px rgba(23,76,53,.12);
+}
+
+.welcome-banner h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.welcome-banner p {
+    max-width: 580px;
+    margin: 0;
+    color: #d7eadc;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.banner-symbol {
+    display: grid;
+    place-items: center;
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px;
+    background: rgba(255,255,255,.1);
+    font-size: 30px;
+}
+
+/* SECTION HEADINGS */
+.section-heading {
+    margin: 28px 0 15px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    color: var(--dark);
+    font-size: 18px;
+}
+
+.section-heading p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* HEALTH CARDS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 16px;
+}
+
+.stat {
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: white;
+    box-shadow: var(--shadow);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.stat::after {
+    position: absolute;
+    right: -25px;
+    bottom: -38px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #f1f6f0;
+    content: "";
+}
+
+.stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(24,68,45,.1);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--sage);
+    font-size: 19px;
+}
+
+.stat h3 {
+    position: relative;
+    z-index: 1;
+    margin: 20px 0 8px;
+    color: var(--dark);
+    font-size: clamp(21px, 2vw, 29px);
+    letter-spacing: -.7px;
+}
+
+.stat h3 small {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-note {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #48a56a;
+}
+
+/* WHITE CARDS */
+.card {
+    margin-top: 23px;
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+.card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.card-heading h2 {
+    margin: 0;
+    color: var(--dark);
+    font-size: 18px;
+}
+
+.card-heading p {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.mini-label {
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: var(--sage);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 21px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.field label {
+    color: #43594b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.field input, .field select {
+    width: 100%;
+    min-height: 47px;
+    padding: 12px 14px;
+    border: 1px solid #dce6dd;
+    border-radius: 10px;
+    background: #fbfdfb;
+    color: var(--text);
+    outline: none;
+    font-size: 12px;
+    transition: .2s;
+}
+
+.field input:focus, .field select:focus {
+    border-color: #72a984;
+    box-shadow: 0 0 0 4px rgba(40,118,80,.09);
+}
+
+.form-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.helper {
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 45px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 750;
+    transition: .2s;
+}
+
+.btn-primary {
+    background: var(--forest);
+    color: white;
+    box-shadow: 0 5px 12px rgba(23,76,53,.15);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    background: var(--green);
+    box-shadow: 0 8px 18px rgba(23,76,53,.2);
+}
+
+/* TABLE */
+.table-search {
+    width: 175px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline-color: #83b696;
+    font-size: 11px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+thead { background: #edf5ee; }
+
+th {
+    padding: 15px 16px;
+    color: var(--forest);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 15px 16px;
+    border-top: 1px solid #edf1ed;
+    color: #526257;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+tbody tr:hover { background: #f5faf5; }
+tbody td:first-child { color: var(--text); font-weight: 700; }
+
+.measurement-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.measurement-icon {
+    display: grid;
+    place-items: center;
+    width: 31px;
+    height: 31px;
+    border-radius: 9px;
+    background: var(--sage);
+    font-size: 15px;
+}
+
+.value-pill {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: #f1f6f0;
+    color: var(--forest);
+    font-weight: 750;
+}
+
+.empty-state {
+    padding: 25px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* PRIVACY NOTICE */
+.privacy-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 18px;
+    padding: 15px;
+    border: 1px solid #e0eadf;
+    border-radius: 12px;
+    background: #f0f6ef;
+    color: #5d7564;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.privacy-note strong { color: var(--forest); }
+
+/* TOAST */
+.toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 50;
+    max-width: calc(100vw - 32px);
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: var(--dark);
+    color: white;
+    box-shadow: 0 12px 30px rgba(0,0,0,.16);
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: .2s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1150px) {
+    .sidebar { width: 215px; }
+    main { margin-left: 215px; }
+    .content { padding: 24px; }
+    .topbar { padding: 14px 22px; }
+    .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 760px) {
+    .sidebar {
+        position: static;
+        width: auto;
+        padding: 14px;
+    }
+
+    .logo { margin: 0 5px 13px; }
+    .nav-title { display: none; }
+
+    .sidebar .nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .sidebar .nav a {
+        flex: 0 0 auto;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .sidebar .nav-icon { font-size: 14px; }
+    .sidebar .nav + .nav-title { display: none; }
+
+    main { margin-left: 0; }
+
+    .topbar {
+        position: static;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .search {
+        order: 3;
+        flex-basis: 100%;
+        max-width: none;
+    }
+
+    .profile { margin-left: auto; }
+    .content { padding: 20px 15px; }
+    .welcome-banner { padding: 20px; }
+    .banner-symbol { width: 49px; height: 49px; font-size: 23px; }
+    .date-chip { display: none; }
+    .card { padding: 20px 15px; }
+    .form-grid { grid-template-columns: 1fr; gap: 16px; }
+    .form-bottom { align-items: stretch; flex-direction: column; }
+    .btn-primary { width: 100%; }
+    .table-search { width: 140px; }
+}
+
+@media (max-width: 420px) {
+    .stats { gap: 10px; }
+    .stat { padding: 13px; }
+    .stat-top { font-size: 10px; }
+    .stat-icon { width: 32px; height: 32px; font-size: 15px; }
+    .stat h3 { font-size: 20px; }
+    .stat-note { font-size: 9px; }
+    .card-heading { flex-direction: column; }
+    .table-search { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <a class="brand" href="welcome.html" aria-label="Medi AI home">
+              <div class="logo">
+                 
+     <img src="download.png" alt="Medi AI logo" width="190">
+    <span></span>
+</div>
+        </a>
+        </div>
+
+        <p class="nav-title" data-i18n="main">MAIN MENU</p>
+
+        <nav class="nav" aria-label="Main navigation">
+            <a href="index.html">
+                <span class="nav-icon">⌂</span>
+                <span data-i18n="dashboard">Dashboard</span>
+            </a>
+            <a href="ai-health-check.html">
+                <span class="nav-icon">♡</span>
+                <span data-i18n="aiHealthCheck">AI Health Check</span>
+            </a>
+            <a href="consultations.html">
+                <span class="nav-icon">♧</span>
+                <span data-i18n="consultations">Consultations</span>
+            </a>
+            <a href="medical-records.html">
+                <span class="nav-icon">▤</span>
+                <span data-i18n="medicalRecords">Medical Records</span>
+            </a>
+            <a href="health-tracking.html" class="active" aria-current="page">
+                <span class="nav-icon">▥</span>
+                <span data-i18n="healthTracking">Health Tracking</span>
+            </a>
+            <a href="find-doctor.html">
+                <span class="nav-icon">⌖</span>
+                <span data-i18n="findDoctor">Find a Doctor</span>
+            </a>
+        </nav>
+
+        <p class="nav-title" data-i18n="account">ACCOUNT</p>
+
+        <nav class="nav" aria-label="Account navigation">
+            <a href="settings.html">
+                <span class="nav-icon">⚙</span>
+                <span data-i18n="settings">Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <header class="topbar">
+            <div class="search">
+                <span>⌕</span>
+                <input
+                    id="globalSearch"
+                    type="search"
+                    placeholder="Search health data..."
+                    data-i18n-placeholder="searchPlaceholder"
+                    aria-label="Search health data">
+            </div>
+
+            <div class="profile">
+                <div class="avatar">U</div>
+                <div>
+                    <strong data-i18n="user">User</strong>
+                    <small data-i18n="patient">Patient</small>
+                </div>
+            </div>
+
+            <select id="languageSelect" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="gu">ગુજરાતી</option>
+            </select>
+        </header>
+
+        <section class="content">
+            <div class="page-header">
+                <div>
+                    <div class="eyebrow">WELLNESS OVERVIEW</div>
+                    <h1 data-i18n="healthTracking">Health Tracking</h1>
+                    <p data-i18n="description">
+                        Monitor your health information over time.
+                    </p>
+                </div>
+                <div class="date-chip" id="todayDate"></div>
+            </div>
+
+            <!-- WELCOME BANNER -->
+            <div class="welcome-banner">
+                <div>
+                    <h2 data-i18n="welcomeTitle">Small steps, healthier you.</h2>
+                    <p data-i18n="welcomeText">
+                        Keep your measurements in one place and build a clearer
+                        picture of your wellbeing over time.
+                    </p>
+                </div>
+                <div class="banner-symbol">✚</div>
+            </div>
+
+            <!-- HEALTH SUMMARY -->
+            <div class="section-heading">
+                <h2 data-i18n="snapshot">Your health snapshot</h2>
+                <p data-i18n="sampleNote">Example readings for demonstration</p>
+            </div>
+
+            <div class="stats">
+                <article class="stat">
+                    <div class="stat-top">
+                        <span data-i18n="heartRate">Heart Rate</span>
+                        <div class="stat-icon">♥</div>
+                    </div>
+                    <h3>72 <small>BPM</small></h3>
+                    <p class="stat-note">
+                        <span class="status-dot"></span>
+                        <span data-i18n="sampleReading">Sample reading</span>
+                    </p>
+                </article>
+
+                <article class="stat">
+                    <div class="stat-top">
+                        <span data-i18n="bloodPressure">Blood Pressure</span>
+                        <div class="stat-icon">♡</div>
+                    </div>
+                    <h3>120/80</h3>
+                    <p class="stat-note">
+                        <span class="status-dot"></span>
+                        <span data-i18n="sampleReading">Sample reading</span>
+                    </p>
+                </article>
+
+                <article class="stat">
+                    <div class="stat-top">
+                        <span data-i18n="temperature">Temperature</span>
+                        <div class="stat-icon">♨</div>
+                    </div>
+                    <h3>98.6°F</h3>
+                    <p class="stat-note">
+                        <span class="status-dot"></span>
+                        <span data-i18n="sampleReading">Sample reading</span>
+                    </p>
+                </article>
+
+                <article class="stat">
+                    <div class="stat-top">
+                        <span data-i18n="sleep">Sleep</span>
+                        <div class="stat-icon">☾</div>
+                    </div>
+                    <h3>7.5 <small>hrs</small></h3>
+                    <p class="stat-note">
+                        <span class="status-dot"></span>
+                        <span data-i18n="dailyAverage">Daily average</span>
+                    </p>
+                </article>
+            </div>
+
+            <!-- ADD MEASUREMENT -->
+            <section class="card">
+                <div class="card-heading">
+                    <div>
+                        <h2 data-i18n="addMeasurement">Add Health Measurement</h2>
+                        <p data-i18n="formDescription">
+                            Record a new reading to keep your history up to date.
+                        </p>
+                    </div>
+                    <span class="mini-label" data-i18n="quickEntry">QUICK ENTRY</span>
+                </div>
+
+                <form id="measurementForm">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="measurement" data-i18n="measurement">
+                                Measurement
+                            </label>
+                            <select id="measurement" required>
+                                <option value="Blood Pressure" data-i18n="bloodPressure">Blood Pressure</option>
+                                <option value="Heart Rate" data-i18n="heartRate">Heart Rate</option>
+                                <option value="Temperature" data-i18n="temperature">Temperature</option>
+                                <option value="Weight" data-i18n="weight">Weight</option>
+                                <option value="Blood Sugar" data-i18n="bloodSugar">Blood Sugar</option>
+                                <option value="Sleep" data-i18n="sleep">Sleep</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="measurementValue" data-i18n="value">Value</label>
+                            <input
+                                type="text"
+                                id="measurementValue"
+                                placeholder="e.g. 120/80 or 72 BPM"
+                                data-i18n-placeholder="valuePlaceholder"
+                                maxlength="40"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-bottom">
+                        <span class="helper" data-i18n="demoNotice">
+                            Demo mode: entries are kept in this page only.
+                        </span>
+                        <button type="submit" class="btn btn-primary">
+                            <span>＋</span>
+                            <span data-i18n="save">Save Measurement</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RECENT MEASUREMENTS -->
+            <section class="card">
+                <div class="card-heading">
+                    <div>
+                        <h2 data-i18n="recent">Recent Measurements</h2>
+                        <p data-i18n="historyDescription">
+                            A simple history of your recorded readings.
+                        </p>
+                    </div>
+                    <input
+                        type="search"
+                        class="table-search"
+                        id="tableSearch"
+                        placeholder="Filter records..."
+                        data-i18n-placeholder="filterPlaceholder"
+                        aria-label="Filter measurements">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="measurement">MEASUREMENT</th>
+                                <th data-i18n="value">VALUE</th>
+                                <th data-i18n="date">DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="measurementRows"></tbody>
+                    </table>
+                    <div class="empty-state" id="emptyState" hidden data-i18n="empty">
+                        No measurements match your search.
+                    </div>
+                </div>
+            </section>
+
+            <div class="privacy-note">
+                <span>🔒</span>
+                <div>
+                    <strong data-i18n="privacyTitle">Your health matters.</strong>
+                    <span data-i18n="privacyText">
+                        These example readings are for demonstration only.
+                        This page does not securely store medical records or
+                        replace advice from a qualified healthcare professional.
+                    </span>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const translations = {
+    en: {
+        main:"MAIN MENU", dashboard:"Dashboard", aiHealthCheck:"AI Health Check",
+        consultations:"Consultations", medicalRecords:"Medical Records",
+        healthTracking:"Health Tracking", findDoctor:"Find a Doctor",
+        account:"ACCOUNT", settings:"Settings", user:"User", patient:"Patient",
+        searchPlaceholder:"Search health data...",
+        description:"Monitor your health information over time.",
+        welcomeTitle:"Small steps, healthier you.",
+        welcomeText:"Keep your measurements in one place and build a clearer picture of your wellbeing over time.",
+        snapshot:"Your health snapshot", sampleNote:"Example readings for demonstration",
+        sampleReading:"Sample reading", heartRate:"Heart Rate",
+        bloodPressure:"Blood Pressure", temperature:"Temperature", sleep:"Sleep",
+        dailyAverage:"Daily average", addMeasurement:"Add Health Measurement",
+        formDescription:"Record a new reading to keep your history up to date.",
+        quickEntry:"QUICK ENTRY", measurement:"Measurement", value:"Value",
+        weight:"Weight", bloodSugar:"Blood Sugar",
+        valuePlaceholder:"e.g. 120/80 or 72 BPM", save:"Save Measurement",
+        demoNotice:"Demo mode: entries are kept in this page only.",
+        recent:"Recent Measurements",
+        historyDescription:"A simple history of your recorded readings.",
+        filterPlaceholder:"Filter records...", date:"DATE",
+        empty:"No measurements match your search.",
+        privacyTitle:"Your health matters.",
+        privacyText:" These example readings are for demonstration only. This page does not securely store medical records or replace advice from a qualified healthcare professional.",
+        saved:"Measurement added to the table.",
+        today:"Today"
+    },
+    hi: {
+        main:"मुख्य मेनू", dashboard:"डैशबोर्ड", aiHealthCheck:"AI स्वास्थ्य जाँच",
+        consultations:"परामर्श", medicalRecords:"मेडिकल रिकॉर्ड",
+        healthTracking:"स्वास्थ्य ट्रैकिंग", findDoctor:"डॉक्टर खोजें",
+        account:"खाता", settings:"सेटिंग्स", user:"उपयोगकर्ता", patient:"मरीज़",
+        searchPlaceholder:"स्वास्थ्य डेटा खोजें...",
+        description:"समय के साथ अपनी स्वास्थ्य जानकारी पर नज़र रखें।",
+        welcomeTitle:"छोटे कदम, बेहतर स्वास्थ्य।",
+        welcomeText:"अपनी रीडिंग एक जगह रखें और समय के साथ अपनी सेहत को बेहतर समझें।",
+        snapshot:"आपकी स्वास्थ्य झलक", sampleNote:"प्रदर्शन के लिए उदाहरण रीडिंग",
+        sampleReading:"नमूना रीडिंग", heartRate:"हृदय गति",
+        bloodPressure:"ब्लड प्रेशर", temperature:"तापमान", sleep:"नींद",
+        dailyAverage:"दैनिक औसत", addMeasurement:"स्वास्थ्य माप जोड़ें",
+        formDescription:"अपना रिकॉर्ड अपडेट रखने के लिए नई रीडिंग दर्ज करें।",
+        quickEntry:"त्वरित प्रविष्टि", measurement:"माप", value:"मान",
+        weight:"वज़न", bloodSugar:"ब्लड शुगर",
+        valuePlaceholder:"जैसे 120/80 या 72 BPM", save:"माप सेव करें",
+        demoNotice:"डेमो मोड: प्रविष्टियाँ केवल इस पेज पर रहती हैं।",
+        recent:"हाल के माप", historyDescription:"आपकी दर्ज की गई रीडिंग का इतिहास।",
+        filterPlaceholder:"रिकॉर्ड फ़िल्टर करें...", date:"तारीख",
+        empty:"आपकी खोज से कोई माप नहीं मिला।",
+        privacyTitle:"आपका स्वास्थ्य महत्वपूर्ण है।",
+        privacyText:" ये उदाहरण केवल प्रदर्शन के लिए हैं। यह पेज मेडिकल रिकॉर्ड को सुरक्षित रूप से संग्रहीत नहीं करता और पेशेवर चिकित्सा सलाह का विकल्प नहीं है।",
+        saved:"माप तालिका में जोड़ दिया गया।", today:"आज"
+    },
+    gu: {
+        main:"મુખ્ય મેનુ", dashboard:"ડેશબોર્ડ", aiHealthCheck:"AI આરોગ્ય તપાસ",
+        consultations:"પરામર્શ", medicalRecords:"તબીબી રેકોર્ડ",
+        healthTracking:"આરોગ્ય ટ્રેકિંગ", findDoctor:"ડૉક્ટર શોધો",
+        account:"એકાઉન્ટ", settings:"સેટિંગ્સ", user:"વપરાશકર્તા", patient:"દર્દી",
+        searchPlaceholder:"આરોગ્ય ડેટા શોધો...",
+        description:"સમય સાથે તમારી આરોગ્ય માહિતી પર નજર રાખો.",
+        welcomeTitle:"નાનાં પગલાં, વધુ સારું આરોગ્ય.",
+        welcomeText:"તમારા માપ એક જગ્યાએ રાખો અને સમય સાથે તમારા આરોગ્યને વધુ સારી રીતે સમજો.",
+        snapshot:"તમારા આરોગ્યની ઝલક", sampleNote:"પ્રદર્શન માટેનાં ઉદાહરણ માપ",
+        sampleReading:"નમૂના માપ", heartRate:"હૃદયના ધબકારા",
+        bloodPressure:"બ્લડ પ્રેશર", temperature:"તાપમાન", sleep:"ઊંઘ",
+        dailyAverage:"દૈનિક સરેરાશ", addMeasurement:"આરોગ્ય માપ ઉમેરો",
+        formDescription:"તમારો ઇતિહાસ અપડેટ રાખવા માટે નવું માપ નોંધો.",
+        quickEntry:"ઝડપી નોંધ", measurement:"માપ", value:"મૂલ્ય",
+        weight:"વજન", bloodSugar:"બ્લડ શુગર",
+        valuePlaceholder:"દા.ત. 120/80 અથવા 72 BPM", save:"માપ સાચવો",
+        demoNotice:"ડેમો મોડ: નોંધો ફક્ત આ પેજ પર રહે છે.",
+        recent:"તાજેતરના માપ", historyDescription:"તમે નોંધેલા માપનો સરળ ઇતિહાસ.",
+        filterPlaceholder:"રેકોર્ડ ફિલ્ટર કરો...", date:"તારીખ",
+        empty:"તમારી શોધ સાથે મેળ ખાતું માપ મળ્યું નથી.",
+        privacyTitle:"તમારું આરોગ્ય મહત્વનું છે.",
+        privacyText:" આ ઉદાહરણો ફક્ત પ્રદર્શન માટે છે. આ પેજ તબીબી રેકોર્ડ સુરક્ષિત રીતે સંગ્રહતું નથી અને યોગ્ય આરોગ્ય નિષ્ણાતની સલાહનું સ્થાન લઈ શકતું નથી.",
+        saved:"માપ કોષ્ટકમાં ઉમેરાયું.", today:"આજે"
+    }
+};
+
+const measurementNames = {
+    en: {
+        "Blood Pressure":"Blood Pressure", "Heart Rate":"Heart Rate",
+        "Temperature":"Temperature", "Weight":"Weight",
+        "Blood Sugar":"Blood Sugar", "Sleep":"Sleep"
+    },
+    hi: {
+        "Blood Pressure":"ब्लड प्रेशर", "Heart Rate":"हृदय गति",
+        "Temperature":"तापमान", "Weight":"वज़न",
+        "Blood Sugar":"ब्लड शुगर", "Sleep":"नींद"
+    },
+    gu: {
+        "Blood Pressure":"બ્લડ પ્રેશર", "Heart Rate":"હૃદયના ધબકારા",
+        "Temperature":"તાપમાન", "Weight":"વજન",
+        "Blood Sugar":"બ્લડ શુગર", "Sleep":"ઊંઘ"
+    }
+};
+
+const icons = {
+    "Blood Pressure":"♡",
+    "Heart Rate":"♥",
+    "Temperature":"♨",
+    "Weight":"⚖",
+    "Blood Sugar":"◉",
+    "Sleep":"☾"
+};
+
+let language = "en";
+
+let records = [
+    {type:"Blood Pressure", value:"120/80", date:"2026-09-06"},
+    {type:"Heart Rate", value:"72 BPM", date:"2026-09-06"},
+    {type:"Temperature", value:"98.6°F", date:"2026-09-05"}
+];
+
+const $ = id => document.getElementById(id);
+
+function formatDate(date) {
+    const locale = language === "hi" ? "hi-IN" :
+                   language === "gu" ? "gu-IN" : "en-GB";
+
+    return new Date(date + "T12:00:00").toLocaleDateString(locale, {
+        day:"2-digit", month:"short", year:"numeric"
+    });
+}
+
+function translatePage() {
+    const dictionary = translations[language];
+    document.documentElement.lang = language;
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.dataset.i18n;
+        if (dictionary[key]) {
+            element.textContent = dictionary[key];
+        }
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+        const key = element.dataset.i18nPlaceholder;
+        if (dictionary[key]) {
+            element.placeholder = dictionary[key];
+        }
+    });
+
+    const locale = language === "hi" ? "hi-IN" :
+                   language === "gu" ? "gu-IN" : "en-GB";
+
+    $("todayDate").textContent =
+        dictionary.today + " · " +
+        new Date().toLocaleDateString(locale, {
+            day:"2-digit", month:"short", year:"numeric"
+        });
+
+    renderRecords();
+}
+
+function renderRecords() {
+    const query = (
+        $("tableSearch").value + " " +
+        $("globalSearch").value
+    ).trim().toLocaleLowerCase();
+
+    const filtered = records.filter(record => {
+        const translatedName =
+            measurementNames[language][record.type] || record.type;
+
+        return (
+            record.type + " " +
+            translatedName + " " +
+            record.value + " " +
+            record.date
+        ).toLocaleLowerCase().includes(query);
+    });
+
+    const tbody = $("measurementRows");
+    tbody.replaceChildren();
+
+    filtered.forEach(record => {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        const nameWrap = document.createElement("div");
+        nameWrap.className = "measurement-name";
+
+        const icon = document.createElement("span");
+        icon.className = "measurement-icon";
+        icon.textContent = icons[record.type] || "•";
+        icon.setAttribute("aria-hidden", "true");
+
+        const name = document.createElement("span");
+        name.textContent =
+            measurementNames[language][record.type] || record.type;
+
+        nameWrap.append(icon, name);
+        nameCell.append(nameWrap);
+
+        const valueCell = document.createElement("td");
+        const pill = document.createElement("span");
+        pill.className = "value-pill";
+        pill.textContent = record.value;
+        valueCell.append(pill);
+
+        const dateCell = document.createElement("td");
+        dateCell.textContent = formatDate(record.date);
+
+        row.append(nameCell, valueCell, dateCell);
+        tbody.append(row);
+    });
+
+    $("emptyState").hidden = filtered.length !== 0;
+    tbody.closest("table").style.display = filtered.length ? "" : "none";
+}
+
+let toastTimer;
+
+function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2800);
+}
+
+$("measurementForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const type = $("measurement").value;
+    const value = $("measurementValue").value.trim();
+
+    if (!value) {
+        $("measurementValue").focus();
+        return;
+    }
+
+    records.unshift({
+        type: type,
+        value: value,
+        date: new Date().toISOString().slice(0, 10)
+    });
+
+    $("measurementValue").value = "";
+    renderRecords();
+    showToast(translations[language].saved);
+});
+
+$("languageSelect").addEventListener("change", function(event) {
+    language = event.target.value;
+    translatePage();
+});
+
+$("tableSearch").addEventListener("input", renderRecords);
+$("globalSearch").addEventListener("input", renderRecords);
+
+translatePage();
+</script>
+</body>
+</html>

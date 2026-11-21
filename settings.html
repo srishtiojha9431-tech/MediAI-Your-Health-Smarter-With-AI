@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#103b29">
+    <title>Medi AI — Settings</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --settings-ink: #173b2c;
+            --settings-muted: #718078;
+            --settings-green: #23734d;
+            --settings-green-dark: #164d34;
+            --settings-forest: #103b29;
+            --settings-forest-light: #174c35;
+            --settings-mint: #eaf4ed;
+            --settings-border: #e0e9e1;
+            --settings-bg: #f4f8f5;
+            --settings-white: #ffffff;
+            --settings-danger: #b93838;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body.settings-page {
+            margin: 0;
+            background: var(--settings-bg);
+            color: var(--settings-ink);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        .settings-page button,
+        .settings-page input,
+        .settings-page select { font: inherit; }
+
+        .settings-page a { text-decoration: none; }
+
+        /* Keep the same left-sidebar/right-content layout. */
+        .settings-page .app {
+            display: grid !important;
+            grid-template-columns: 260px minmax(0, 1fr) !important;
+            align-items: stretch;
+            gap: 0;
+            min-height: 100vh;
+        }
+
+        .settings-page .sidebar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            width: 260px;
+            min-width: 0;
+            height: 100vh;
+            min-height: 100vh;
+            padding: 25px 16px;
+            overflow-y: auto;
+            border-right: 1px solid var(--settings-forest-light);
+            border-radius: 0;
+            background: var(--settings-forest) !important;
+            color: #ffffff !important;
+        }
+
+        .settings-page .sidebar .brand {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            flex: 0 0 auto;
+        }
+
+        .settings-page .sidebar .logo {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 82px;
+            margin: 0 2px 28px;
+        }
+
+        .settings-page .sidebar .logo img {
+            display: block;
+            width: 210px;
+            max-width: 100%;
+            max-height: 78px;
+            height: auto;
+            object-fit: contain;
+            object-position: left center;
+        }
+
+        .settings-page .sidebar .nav-title {
+            display: block;
+            margin: 0 10px 12px;
+            color: #d9eee0 !important;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .settings-page .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            width: 100%;
+            margin: 0 0 24px;
+            padding: 0;
+        }
+
+        .settings-page .sidebar .nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 46px;
+            padding: 11px 12px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            background: transparent !important;
+            color: #ffffff !important;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .settings-page .sidebar .nav a:hover {
+            background: var(--settings-forest-light) !important;
+            color: #ffffff !important;
+        }
+
+        .settings-page .sidebar .nav a.active {
+            border-color: rgba(255,255,255,.1);
+            background: var(--settings-green) !important;
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+
+        .settings-page .sidebar .nav a span { color: inherit !important; }
+
+        .settings-page main {
+            grid-column: 2;
+            min-width: 0;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+        .settings-page main > header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            min-height: 76px;
+            padding: 18px 30px;
+            border-bottom: 1px solid var(--settings-border);
+            background: rgba(255,255,255,.94);
+        }
+
+        .settings-page main > header h3 {
+            margin: 0;
+            color: var(--settings-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .settings-page .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .settings-page .avatar {
+            display: grid;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 14px;
+            background: #dcefe1;
+            color: var(--settings-green-dark);
+            font-weight: 800;
+        }
+
+        .settings-page .profile strong,
+        .settings-page .profile small { display: block; }
+
+        .settings-page .profile strong {
+            color: var(--settings-ink);
+            font-size: .86rem;
+        }
+
+        .settings-page .profile small {
+            margin-top: 3px;
+            color: var(--settings-muted);
+            font-size: .75rem;
+        }
+
+        .settings-page .content {
+            /* Fill the space beside the sidebar and align content to the left. */
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 26px 30px 32px;
+        }
+
+        .settings-page .page-header { margin-bottom: 24px; }
+
+        .settings-page .page-header h1 {
+            margin: 0;
+            color: var(--settings-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.35rem);
+            font-weight: 800;
+            letter-spacing: -.04em;
+            line-height: 1.2;
+        }
+
+        .settings-page .page-header p {
+            margin: 9px 0 0;
+            color: var(--settings-muted);
+            font-size: .92rem;
+            line-height: 1.7;
+        }
+
+        .settings-page .card {
+            min-width: 0;
+            margin-bottom: 20px;
+            padding: 25px;
+            border: 1px solid var(--settings-border);
+            border-radius: 20px;
+            background: #ffffff;
+            box-shadow: 0 8px 26px rgba(23,59,44,.045);
+        }
+
+        .settings-page .card h2 {
+            margin: 0 0 22px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edf1ed;
+            color: var(--settings-ink);
+            font-family: "Manrope", sans-serif;
+            font-size: 1.08rem;
+            font-weight: 800;
+        }
+
+        .settings-page .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px 17px;
+            margin-bottom: 22px;
+        }
+
+        .settings-page .field { min-width: 0; }
+
+        .settings-page .field label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--settings-ink);
+            font-size: .86rem;
+            font-weight: 750;
+        }
+
+        .settings-page .field input,
+        .settings-page .field select {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            min-height: 46px;
+            padding: 11px 13px;
+            border: 1px solid #dce6dd;
+            border-radius: 11px;
+            outline: none;
+            color: var(--settings-ink);
+            background: #fbfdfb;
+            font-size: .9rem;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+
+        .settings-page .field input:focus,
+        .settings-page .field select:focus {
+            border-color: #6c9c79;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(35,115,77,.1);
+        }
+
+        .settings-page .field input::placeholder { color: #a0aaa3; }
+
+        .settings-page .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 10px 17px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            cursor: pointer;
+            font-size: .86rem;
+            font-weight: 750;
+            transition: transform .2s, background .2s, box-shadow .2s;
+        }
+
+        .settings-page .btn:hover { transform: translateY(-1px); }
+
+        .settings-page .btn-primary {
+            background: linear-gradient(135deg, #2c8054, #185a38);
+            color: #ffffff;
+            box-shadow: 0 7px 17px rgba(35,115,77,.15);
+        }
+
+        .settings-page .btn-primary:hover {
+            box-shadow: 0 10px 22px rgba(35,115,77,.22);
+        }
+
+        .settings-page .btn-outline {
+            border-color: #b9d4c1;
+            background: #ffffff;
+            color: var(--settings-green-dark);
+        }
+
+        .settings-page .btn-outline:hover { background: #f1f8f2; }
+
+        .settings-page .btn-danger {
+            margin-left: 8px;
+            border-color: #f0caca;
+            background: #fff5f5;
+            color: var(--settings-danger);
+        }
+
+        .settings-page .btn-danger:hover { background: #ffeaea; }
+
+        .settings-page .notice.warning {
+            padding: 18px 20px;
+            border: 1px solid #f0e2bd;
+            border-left: 4px solid #d6a33b;
+            border-radius: 13px;
+            background: #fff9eb;
+            color: #725a2c;
+            font-size: .88rem;
+            line-height: 1.7;
+        }
+
+        .settings-page .notice.warning strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #725a2c;
+        }
+
+        .settings-page .notice.warning p { margin: 0; }
+
+        .settings-page :focus-visible {
+            outline: 3px solid #76a988;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 1000px) {
+            .settings-page .app {
+                grid-template-columns: 225px minmax(0, 1fr) !important;
+            }
+
+            .settings-page .sidebar { width: 225px; }
+            .settings-page .content { padding: 24px; }
+            .settings-page main > header { padding: 17px 24px; }
+        }
+
+        @media (max-width: 720px) {
+            .settings-page .app {
+                grid-template-columns: 1fr !important;
+            }
+
+            .settings-page .sidebar {
+                position: relative;
+                top: auto;
+                width: 100%;
+                height: auto;
+                min-height: 0;
+                padding: 15px;
+                border-right: 0;
+                border-radius: 0;
+                overflow: visible;
+            }
+
+            .settings-page .sidebar .logo { min-height: 68px; margin: 0 3px 20px; }
+            .settings-page .sidebar .logo img { width: 180px; max-height: 65px; }
+
+            .settings-page .sidebar .nav-title { margin: 0 7px 9px; }
+
+            .settings-page main {
+                grid-column: 1;
+                width: 100%;
+                min-width: 0;
+            }
+
+            .settings-page .sidebar .nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-bottom: 17px;
+            }
+
+            .settings-page .sidebar .nav a {
+                width: auto;
+                min-height: 39px;
+                padding: 9px 10px;
+                font-size: .75rem;
+            }
+
+            .settings-page main > header {
+                padding: 16px 18px;
+            }
+
+            .settings-page .content { width: 100%; max-width: none; margin: 0; padding: 20px 14px; }
+            .settings-page .card { padding: 19px; border-radius: 17px; }
+            .settings-page .form-grid { grid-template-columns: 1fr; gap: 17px; }
+            .settings-page .btn { width: 100%; }
+            .settings-page .btn-danger { margin: 10px 0 0; }
+        }
+
+        @media (max-width: 420px) {
+            .settings-page main > header h3 { font-size: 1.02rem; }
+            .settings-page .profile { gap: 7px; }
+            .settings-page .avatar { flex-basis: 36px; width: 36px; height: 36px; }
+            .settings-page .profile small { font-size: .69rem; }
+            .settings-page .page-header h1 { font-size: 1.7rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="settings-page">
+<div class="app">
+
+    <!-- SIDEBAR: SAME MENU ITEMS AS THE OTHER MEDI AI PAGES -->
+    <aside class="sidebar" aria-label="Sidebar">
+        <a class="brand" href="welcome.html" aria-label="Medi AI home">
+            <div class="logo">
+                 <img src="download.png" alt="Medi AI logo" width="165">
+            </div>
+        </a>
+
+        <p class="nav-title" data-i18n="main">MAIN MENU</p>
+
+        <nav class="nav" aria-label="Main navigation">
+            <a href="index.html">
+                🏠 <span data-i18n="dashboard">Dashboard</span>
+            </a>
+            <a href="ai-health-check.html">
+                🩺 <span data-i18n="aiHealthCheck">AI Health Check</span>
+            </a>
+            <a href="consultations.html">
+                👨‍⚕️ <span data-i18n="consultations">Consultations</span>
+            </a>
+            <a href="medical-records.html">
+                📋 <span data-i18n="medicalRecords">Medical Records</span>
+            </a>
+            <a href="health-tracking.html">
+                📊 <span data-i18n="healthTracking">Health Tracking</span>
+            </a>
+            <a href="find-doctor.html">
+                📍 <span data-i18n="findDoctor">Find a Doctor</span>
+            </a>
+        </nav>
+
+        <p class="nav-title" data-i18n="account">ACCOUNT</p>
+
+        <nav class="nav" aria-label="Account navigation">
+            <a href="settings.html" class="active" aria-current="page">
+                ⚙️ <span data-i18n="settings">Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <header>
+            <div>
+                <h3 data-i18n="settings">Settings</h3>
+            </div>
+
+            <div class="profile">
+                <div class="avatar" aria-hidden="true">U</div>
+                <div>
+                    <strong data-i18n="user">User</strong>
+                    <small data-i18n="patient">Patient</small>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="page-header">
+                <div>
+                    <h1 data-i18n="settings">Settings</h1>
+                    <p data-i18n="settingsDescription">Manage your Medi AI preferences.</p>
+                </div>
+            </div>
+
+            <!-- PERSONAL INFORMATION -->
+            <section class="card" aria-labelledby="personalInformationHeading">
+                <h2 id="personalInformationHeading" data-i18n="personalInformation">Personal Information</h2>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="firstName" data-i18n="firstName">First Name</label>
+                        <input id="firstName" type="text" value="User" autocomplete="given-name">
+                    </div>
+
+                    <div class="field">
+                        <label for="lastName" data-i18n="lastName">Last Name</label>
+                        <input id="lastName" type="text" data-i18n-placeholder="enterLastNamePlaceholder" placeholder="Enter last name" autocomplete="family-name">
+                    </div>
+
+                    <div class="field">
+                        <label for="email" data-i18n="email">Email</label>
+                        <input id="email" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="your@email.com" autocomplete="email">
+                    </div>
+
+                    <div class="field">
+                        <label for="phone" data-i18n="phone">Phone</label>
+                        <input id="phone" type="tel" placeholder="+91" autocomplete="tel">
+                    </div>
+                </div>
+
+                <button type="button" id="saveChangesButton" class="btn btn-primary" data-i18n="saveChanges">
+                    Save Changes
+                </button>
+            </section>
+
+            <!-- PREFERENCES -->
+            <section class="card" aria-labelledby="preferencesHeading">
+                <h2 id="preferencesHeading" data-i18n="preferences">Preferences</h2>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="languageSelect" data-i18n="language">Language</label>
+                        <select id="languageSelect">
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी</option>
+                            <option value="gu">ગુજરાતી</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="notifications" data-i18n="notifications">Notifications</label>
+                        <select id="notifications">
+                            <option value="enabled" data-i18n="enabled">Enabled</option>
+                            <option value="disabled" data-i18n="disabled">Disabled</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECURITY -->
+            <section class="card" aria-labelledby="securityHeading">
+                <h2 id="securityHeading" data-i18n="security">Security</h2>
+
+                <button type="button" id="changePasswordButton" class="btn btn-outline" data-i18n="changePassword">
+                    Change Password
+                </button>
+
+                <button type="button" id="logoutButton" class="btn btn-danger" data-i18n="logout">
+                    Logout
+                </button>
+            </section>
+
+            <!-- PRIVACY NOTICE -->
+            <section class="notice warning" aria-label="Healthcare privacy notice">
+                <strong data-i18n="healthcarePrivacy">Healthcare Privacy</strong>
+                <p data-i18n="healthcarePrivacyDescription">
+                    For a real healthcare application, authentication, encryption, access control,
+                    audit logging, and secure backend storage should be implemented before handling
+                    sensitive health information.
+                </p>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/i18n.js" defer></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const languageSelect = document.getElementById("languageSelect");
+        const notificationsSelect = document.getElementById("notifications");
+        const saveButton = document.getElementById("saveChangesButton");
+        const passwordButton = document.getElementById("changePasswordButton");
+        const logoutButton = document.getElementById("logoutButton");
+
+        function currentLanguage() {
+            return localStorage.getItem("mediAI-language") || "en";
+        }
+
+        function translatedMessage(key, fallback) {
+            const language = currentLanguage();
+            const dictionary = window.translations;
+
+            if (dictionary && dictionary[language] && dictionary[language][key]) {
+                return dictionary[language][key];
+            }
+
+            if (dictionary && dictionary.en && dictionary.en[key]) {
+                return dictionary.en[key];
+            }
+
+            return fallback;
+        }
+
+        // Match the language selector to the saved app language.
+        if (languageSelect) {
+            const savedLanguage = currentLanguage();
+            if ([...languageSelect.options].some(option => option.value === savedLanguage)) {
+                languageSelect.value = savedLanguage;
+            }
+
+            languageSelect.addEventListener("change", function () {
+                localStorage.setItem("mediAI-language", languageSelect.value);
+                // Reload so the existing translation script can reapply page text.
+                window.location.reload();
+            });
+        }
+
+        // Save preferences locally for this demo. Connect a secure backend for real accounts.
+        if (notificationsSelect) {
+            const savedNotifications = localStorage.getItem("mediAI-notifications");
+            if (savedNotifications && [...notificationsSelect.options].some(option => option.value === savedNotifications)) {
+                notificationsSelect.value = savedNotifications;
+            }
+            notificationsSelect.addEventListener("change", function () {
+                localStorage.setItem("mediAI-notifications", notificationsSelect.value);
+            });
+        }
+
+        if (saveButton) {
+            saveButton.addEventListener("click", function () {
+                const profile = {
+                    firstName: document.getElementById("firstName").value.trim(),
+                    lastName: document.getElementById("lastName").value.trim(),
+                    email: document.getElementById("email").value.trim(),
+                    phone: document.getElementById("phone").value.trim()
+                };
+
+                // Demo-only local storage; do not store sensitive health data this way.
+                localStorage.setItem("mediAI-profile", JSON.stringify(profile));
+                alert(translatedMessage("settingsSavedMessage", "Your settings have been saved on this device for this demo."));
+            });
+        }
+
+        if (passwordButton) {
+            passwordButton.addEventListener("click", function () {
+                alert(translatedMessage("passwordDemoMessage", "Password changes are not connected yet. Connect an authentication service to enable this feature."));
+            });
+        }
+
+        if (logoutButton) {
+            logoutButton.addEventListener("click", function () {
+                if (typeof window.logout === "function") {
+                    window.logout();
+                } else {
+                    const confirmed = window.confirm("Log out of Medi AI?");
+                    if (confirmed) {
+                        window.location.href = "welcome.html";
+                    }
+                }
+            });
+        }
+
+        // Restore saved profile fields if they exist.
+        try {
+            const savedProfile = JSON.parse(localStorage.getItem("mediAI-profile") || "null");
+            if (savedProfile) {
+                ["firstName", "lastName", "email", "phone"].forEach(function (field) {
+                    const input = document.getElementById(field);
+                    if (input && typeof savedProfile[field] === "string") {
+                        input.value = savedProfile[field];
+                    }
+                });
+            }
+        } catch (error) {
+            console.warn("Saved settings could not be read.", error);
+        }
+    });
+</script>
+
+</body>
+</html>

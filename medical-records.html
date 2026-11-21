@@ -1,0 +1,1474 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#103b29">
+
+    <title>Medi AI | Medical Records</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        :root {
+            --forest: #103b29;
+            --forest-light: #174c35;
+            --green: #23734d;
+            --green-bright: #2f855a;
+            --sage: #e8f1e9;
+            --sage-light: #f3f7f1;
+            --mint: #d9eee0;
+            --text: #23382d;
+            --muted: #758579;
+            --border: #e1eae0;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--sage-light);
+            color: var(--text);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button, select {
+            cursor: pointer;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--forest), var(--forest-light));
+            color: white;
+        }
+
+        .logo img {
+            display: block;
+            max-width: 180px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .nav-title {
+            color: #a8c6b1;
+        }
+
+        .nav a {
+            color: #d5e5d9;
+            border-radius: 10px;
+            transition: background .2s, color .2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, .13);
+            color: white;
+        }
+
+        .nav a.active {
+            box-shadow: inset 3px 0 #8dc6a0;
+        }
+
+        /* Main content */
+
+        main {
+            min-width: 0;
+        }
+
+        header {
+            background: rgba(255, 255, 255, .96);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8faf7;
+        }
+
+        .search input {
+            min-width: 0;
+            color: var(--text);
+            background: transparent;
+        }
+
+        .search:focus-within {
+            border-color: var(--green-bright);
+            box-shadow: 0 0 0 3px rgba(47, 133, 90, .1);
+        }
+
+        .profile strong {
+            color: var(--text);
+        }
+
+        .profile small {
+            color: var(--muted);
+        }
+
+        .avatar {
+            background: var(--sage);
+            color: var(--forest);
+        }
+
+        #languageSelect {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: var(--forest);
+        }
+
+        .content {
+            padding-bottom: 35px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .page-heading h1 {
+            margin: 0 0 8px;
+            color: var(--forest);
+            font: 800 27px "Plus Jakarta Sans", sans-serif;
+            letter-spacing: -.8px;
+        }
+
+        .page-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Add record button */
+
+        .add-record-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 17px;
+            border: 0;
+            border-radius: 11px;
+            background: var(--green);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 5px 12px rgba(35, 115, 77, .17);
+            transition: transform .2s, background .2s;
+        }
+
+        .add-record-btn:hover {
+            transform: translateY(-2px);
+            background: var(--forest-light);
+        }
+
+        /* Hero banner */
+
+        .records-hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 32px;
+            margin-bottom: 26px;
+            color: white;
+            border-radius: 22px;
+            background: linear-gradient(120deg, #103b29, #1d6845 65%, #4a9870);
+            box-shadow: 0 14px 32px rgba(16, 59, 41, .13);
+        }
+
+        .records-hero::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            border: 36px solid rgba(255, 255, 255, .08);
+            border-radius: 50%;
+            right: 100px;
+            top: -125px;
+            pointer-events: none;
+        }
+
+        .records-hero h2 {
+            margin: 8px 0;
+            font: 800 27px "Plus Jakarta Sans", sans-serif;
+            letter-spacing: -.8px;
+        }
+
+        .records-hero p {
+            max-width: 490px;
+            margin: 0;
+            color: #e0f0e5;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #c5eed2;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-icon {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 90px;
+            height: 90px;
+            border: 1px solid rgba(255, 255, 255, .25);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .13);
+            font-size: 43px;
+        }
+
+        /* Statistics */
+
+        .records-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 5px 18px rgba(16, 59, 41, .035);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(16, 59, 41, .09);
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 49px;
+            height: 49px;
+            flex-shrink: 0;
+            border-radius: 15px;
+            font-size: 23px;
+        }
+
+        .stat-icon.blue {
+            background: #e5f0e7;
+        }
+
+        .stat-icon.teal {
+            background: #dcf1e5;
+        }
+
+        .stat-icon.purple {
+            background: #edf0e5;
+        }
+
+        .stat-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            color: var(--forest);
+            font: 800 25px "Plus Jakarta Sans", sans-serif;
+        }
+
+        /* Records panel */
+
+        .records-panel {
+            padding: 26px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(16, 59, 41, .035);
+        }
+
+        .records-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin: 0 0 22px;
+        }
+
+        .records-toolbar h3 {
+            margin: 0 0 5px;
+            color: var(--forest);
+            font: 700 19px "Plus Jakarta Sans", sans-serif;
+        }
+
+        .records-subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .records-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .records-search,
+        .records-filter {
+            min-height: 43px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fbfcfa;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .records-search {
+            width: 210px;
+        }
+
+        .records-search:focus,
+        .records-filter:focus {
+            border-color: var(--green-bright);
+            box-shadow: 0 0 0 3px rgba(47, 133, 90, .1);
+        }
+
+        /* Table */
+
+        .records-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e8eee7;
+            border-radius: 14px;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .records-table thead {
+            background: #f0f5ef;
+        }
+
+        .records-table th {
+            padding: 15px 17px;
+            color: #65796a;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .records-table td {
+            padding: 15px 17px;
+            border-top: 1px solid #e9efe7;
+            color: #5c6e60;
+            font-size: 13px;
+        }
+
+        .records-table tbody tr {
+            transition: background .2s;
+        }
+
+        .records-table tbody tr:hover {
+            background: #f5f9f3;
+        }
+
+        .record-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .record-file-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 19px;
+        }
+
+        .file-red {
+            background: #fbeae5;
+        }
+
+        .file-blue {
+            background: #e5f0e7;
+        }
+
+        .file-purple {
+            background: #edf0e5;
+        }
+
+        .file-green {
+            background: #dcf1e3;
+        }
+
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #e9f2e9;
+            color: #326747;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .record-date {
+            color: #627665;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .view-btn {
+            padding: 8px 13px;
+            border: 1px solid #cbded0;
+            border-radius: 9px;
+            background: white;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .view-btn:hover {
+            color: white;
+            border-color: var(--forest-light);
+            background: var(--forest-light);
+        }
+
+        .empty-state {
+            display: none;
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* Privacy notice */
+
+        .privacy-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-top: 22px;
+            padding: 20px;
+            border: 1px solid #d6e6d7;
+            border-radius: 16px;
+            background: linear-gradient(120deg, #eaf4e9, #f5f8f1);
+        }
+
+        .privacy-icon {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #d9ebd9;
+            font-size: 21px;
+        }
+
+        .privacy-card strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--forest);
+            font-size: 14px;
+        }
+
+        .privacy-card p {
+            margin: 0;
+            color: #607665;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* Dialog */
+
+        .record-dialog {
+            width: min(480px, calc(100% - 30px));
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text);
+            box-shadow: 0 24px 80px rgba(16, 59, 41, .25);
+        }
+
+        .record-dialog::backdrop {
+            background: rgba(12, 35, 24, .55);
+            backdrop-filter: blur(3px);
+        }
+
+        .dialog-content {
+            padding: 25px;
+        }
+
+        .dialog-content h2 {
+            margin: 0 0 8px;
+            color: var(--forest);
+            font: 800 21px "Plus Jakarta Sans", sans-serif;
+        }
+
+        .dialog-description {
+            margin: 0 0 20px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .form-field {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .form-field span {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            min-height: 43px;
+            padding: 11px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fbfcfa;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .form-field textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .secondary-btn {
+            padding: 11px 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .primary-btn {
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--green);
+            color: white;
+            font-weight: 700;
+        }
+
+        .primary-btn:hover {
+            background: var(--forest-light);
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 20;
+            max-width: calc(100% - 44px);
+            padding: 13px 18px;
+            border-radius: 12px;
+            background: var(--forest);
+            color: white;
+            box-shadow: 0 8px 28px rgba(16, 59, 41, .2);
+            font-size: 13px;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid rgba(47, 133, 90, .35);
+            outline-offset: 2px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 800px) {
+            .records-stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .records-hero {
+                padding: 24px;
+            }
+
+            .hero-icon {
+                width: 65px;
+                height: 65px;
+                font-size: 31px;
+            }
+
+            .records-panel {
+                padding: 17px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .records-hero h2 {
+                font-size: 21px;
+            }
+
+            .hero-icon {
+                display: none;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+
+            .records-toolbar,
+            .records-controls {
+                width: 100%;
+            }
+
+            .records-controls > * {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .records-search {
+                width: 100%;
+            }
+
+            .add-record-btn {
+                width: 100%;
+            }
+
+            .records-hero {
+                padding: 21px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+           <a class="brand" href="welcome.html" aria-label="Medi AI home">
+              <div class="logo">
+                 
+     <img src="download.png" alt="Medi AI logo" width="500" height="500">
+    <span></span>
+</div>
+        </a>
+        </div>
+
+        <p class="nav-title" data-i18n="main">MAIN</p>
+
+        <nav class="nav" aria-label="Main navigation">
+            <a href="index.html">🏠 <span data-i18n="dashboard">Dashboard</span></a>
+            <a href="ai-health-check.html">🩺 <span data-i18n="aiHealthCheck">AI Health Check</span></a>
+            <a href="consultations.html">👨‍⚕️ <span data-i18n="consultations">Consultations</span></a>
+            <a href="medical-records.html" class="active" aria-current="page">📋 <span data-i18n="medicalRecords">Medical Records</span></a>
+            <a href="health-tracking.html">📊 <span data-i18n="healthTracking">Health Tracking</span></a>
+            <a href="find-doctor.html">📍 <span data-i18n="findDoctor">Find a Doctor</span></a>
+        </nav>
+
+        <p class="nav-title" data-i18n="account">ACCOUNT</p>
+
+        <nav class="nav" aria-label="Account navigation">
+            <a href="settings.html">⚙️ <span data-i18n="settings">Settings</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main page -->
+    <main>
+        <header>
+            <div class="search">
+                🔍
+                <input
+                    id="headerSearch"
+                    type="search"
+                    data-i18n-placeholder="searchRecordsPlaceholder"
+                    placeholder="Search records..."
+                    aria-label="Search medical records"
+                >
+            </div>
+
+            <div class="profile">
+                <div class="avatar">U</div>
+                <div>
+                    <strong data-i18n="user">User</strong>
+                    <small data-i18n="patient">Patient</small>
+                </div>
+            </div>
+
+            <select id="languageSelect" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="gu">ગુજરાતી</option>
+            </select>
+        </header>
+
+        <section class="content">
+
+            <!-- Page heading -->
+            <div class="page-header">
+                <div class="page-heading">
+                    <h1 data-i18n="medicalRecords">Medical Records</h1>
+                    <p data-i18n="organizeRecordsDescription">
+                        Organize and review your health records.
+                    </p>
+                </div>
+
+                <button class="add-record-btn" id="addRecordBtn" type="button">
+                    <span aria-hidden="true">＋</span>
+                    <span data-i18n="addRecord">Add Record</span>
+                </button>
+            </div>
+
+            <!-- Hero banner -->
+            <section class="records-hero">
+                <div>
+                    <span class="hero-tag">✦ YOUR HEALTH, ORGANIZED</span>
+                    <h2>Your health journey,<br>all in one place.</h2>
+                    <p>
+                        Access your reports, prescriptions, and consultation
+                        history through your personal medical records dashboard.
+                    </p>
+                </div>
+
+                <div class="hero-icon" aria-hidden="true">🩺</div>
+            </section>
+
+            <!-- Statistics -->
+            <section class="records-stats" aria-label="Record statistics">
+                <article class="stat-card">
+                    <div class="stat-icon blue" aria-hidden="true">📁</div>
+                    <div>
+                        <span class="stat-label" data-i18n="totalRecords">Total Records</span>
+                        <div class="stat-number" id="totalRecords">4</div>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon teal" aria-hidden="true">🧪</div>
+                    <div>
+                        <span class="stat-label" data-i18n="labReports">Lab Reports</span>
+                        <div class="stat-number" id="labRecords">1</div>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon purple" aria-hidden="true">💊</div>
+                    <div>
+                        <span class="stat-label" data-i18n="prescriptions">Prescriptions</span>
+                        <div class="stat-number" id="prescriptionRecords">1</div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Records table -->
+            <section class="records-panel">
+                <div class="records-toolbar">
+                    <div>
+                        <h3 data-i18n="yourRecords">Your Records</h3>
+                        <p class="records-subtitle" data-i18n="recordsSubtitle">
+                            Keep track of your important health documents.
+                        </p>
+                    </div>
+
+                    <div class="records-controls">
+                        <input
+                            class="records-search"
+                            id="recordSearch"
+                            type="search"
+                            data-i18n-placeholder="searchRecordsPlaceholder"
+                            placeholder="Search records..."
+                            aria-label="Filter records by name"
+                        >
+
+                        <select class="records-filter" id="typeFilter" aria-label="Filter by record type">
+                            <option value="all" data-i18n="allTypes">All types</option>
+                            <option value="laboratory" data-i18n="laboratory">Laboratory</option>
+                            <option value="ai" data-i18n="aiHealthCheck">AI Health Check</option>
+                            <option value="medication" data-i18n="medication">Medication</option>
+                            <option value="consultation" data-i18n="consultationType">Consultation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="records-table-wrap">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="record">Record</th>
+                                <th data-i18n="type">Type</th>
+                                <th data-i18n="date">Date</th>
+                                <th data-i18n="action">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="recordsBody">
+                            <tr data-type="laboratory">
+                                <td>
+                                    <div class="record-name">
+                                        <span class="record-file-icon file-red">🩸</span>
+                                        <span data-i18n="bloodTest">Blood Test</span>
+                                    </div>
+                                </td>
+                                <td><span class="type-badge" data-i18n="laboratory">Laboratory</span></td>
+                                <td class="record-date" data-date="2026-09-05">05 Sep 2026</td>
+                                <td><button class="view-btn" type="button" data-record="Blood Test" data-i18n="view">View</button></td>
+                            </tr>
+
+                            <tr data-type="ai">
+                                <td>
+                                    <div class="record-name">
+                                        <span class="record-file-icon file-blue">📄</span>
+                                        <span data-i18n="healthCheckReport">Health Check Report</span>
+                                    </div>
+                                </td>
+                                <td><span class="type-badge" data-i18n="aiHealthCheck">AI Health Check</span></td>
+                                <td class="record-date" data-date="2026-09-01">01 Sep 2026</td>
+                                <td><button class="view-btn" type="button" data-record="Health Check Report" data-i18n="view">View</button></td>
+                            </tr>
+
+                            <tr data-type="medication">
+                                <td>
+                                    <div class="record-name">
+                                        <span class="record-file-icon file-purple">💊</span>
+                                        <span data-i18n="prescription">Prescription</span>
+                                    </div>
+                                </td>
+                                <td><span class="type-badge" data-i18n="medication">Medication</span></td>
+                                <td class="record-date" data-date="2026-08-28">28 Aug 2026</td>
+                                <td><button class="view-btn" type="button" data-record="Prescription" data-i18n="view">View</button></td>
+                            </tr>
+
+                            <tr data-type="consultation">
+                                <td>
+                                    <div class="record-name">
+                                        <span class="record-file-icon file-green">👨‍⚕️</span>
+                                        <span data-i18n="doctorConsultation">Doctor Consultation</span>
+                                    </div>
+                                </td>
+                                <td><span class="type-badge" data-i18n="consultationType">Consultation</span></td>
+                                <td class="record-date" data-date="2026-08-20">20 Aug 2026</td>
+                                <td><button class="view-btn" type="button" data-record="Doctor Consultation" data-i18n="view">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="empty-state" id="emptyState" role="status">
+                        No matching records found. Try another search.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Privacy notice -->
+            <aside class="privacy-card">
+                <div class="privacy-icon" aria-hidden="true">🔐</div>
+                <div>
+                    <strong data-i18n="privacyNotice">Privacy Notice</strong>
+                    <p data-i18n="privacyNoticeDescription">
+                        This frontend is a demonstration. A production healthcare
+                        platform should use secure, authenticated backend storage
+                        for medical records.
+                    </p>
+                </div>
+            </aside>
+
+        </section>
+    </main>
+</div>
+
+<!-- Add record dialog -->
+<dialog class="record-dialog" id="recordDialog">
+    <form class="dialog-content" id="recordForm">
+        <h2 data-i18n="addRecordTitle">Add a Medical Record</h2>
+        <p class="dialog-description" data-i18n="addRecordDescription">
+            Add a record to this demo dashboard. It will remain only until the page is refreshed.
+        </p>
+
+        <label class="form-field">
+            <span data-i18n="recordName">Record name</span>
+            <input
+                id="newRecordName"
+                name="recordName"
+                type="text"
+                maxlength="100"
+                required
+                placeholder="e.g. Annual Blood Test"
+            >
+        </label>
+
+        <label class="form-field">
+            <span data-i18n="recordType">Record type</span>
+            <select id="newRecordType" name="recordType" required>
+                <option value="laboratory" data-i18n="laboratory">Laboratory</option>
+                <option value="ai" data-i18n="aiHealthCheck">AI Health Check</option>
+                <option value="medication" data-i18n="medication">Medication</option>
+                <option value="consultation" data-i18n="consultationType">Consultation</option>
+            </select>
+        </label>
+
+        <label class="form-field">
+            <span data-i18n="date">Date</span>
+            <input id="newRecordDate" name="recordDate" type="date" required>
+        </label>
+
+        <label class="form-field">
+            <span data-i18n="notesOptional">Notes (optional)</span>
+            <textarea id="newRecordNotes" name="notes" maxlength="500" placeholder="Short description"></textarea>
+        </label>
+
+        <p class="dialog-description" data-i18n="demoNoUpload">
+            This form does not upload or securely store medical files.
+        </p>
+
+        <div class="dialog-actions">
+            <button class="secondary-btn" id="cancelRecordBtn" type="button" data-i18n="cancel">Cancel</button>
+            <button class="primary-btn" type="submit" data-i18n="saveRecord">Save Record</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- View record dialog -->
+<dialog class="record-dialog" id="viewDialog">
+    <div class="dialog-content">
+        <h2 id="viewRecordTitle">Record details</h2>
+        <p class="dialog-description" id="viewRecordDetails"></p>
+        <p class="dialog-description" id="viewRecordNotes"></p>
+        <p class="dialog-description" data-i18n="demoNoDocument">
+            This sample entry has no attached medical document.
+        </p>
+        <div class="dialog-actions">
+            <button class="primary-btn" id="closeViewBtn" type="button" data-i18n="close">Close</button>
+        </div>
+    </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="js/app.js" defer></script>
+<script src="js/i18n.js" defer></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const recordsBody = document.getElementById("recordsBody");
+    const searchInputs = [
+        document.getElementById("recordSearch"),
+        document.getElementById("headerSearch")
+    ];
+
+    const typeFilter = document.getElementById("typeFilter");
+    const emptyState = document.getElementById("emptyState");
+    const recordDialog = document.getElementById("recordDialog");
+    const viewDialog = document.getElementById("viewDialog");
+    const recordForm = document.getElementById("recordForm");
+    const toast = document.getElementById("toast");
+
+    const translations = {
+        en: {
+            main: "MAIN",
+            dashboard: "Dashboard",
+            aiHealthCheck: "AI Health Check",
+            consultations: "Consultations",
+            medicalRecords: "Medical Records",
+            healthTracking: "Health Tracking",
+            findDoctor: "Find a Doctor",
+            account: "ACCOUNT",
+            settings: "Settings",
+            user: "User",
+            patient: "Patient",
+            organizeRecordsDescription: "Organize and review your health records.",
+            addRecord: "Add Record",
+            totalRecords: "Total Records",
+            labReports: "Lab Reports",
+            prescriptions: "Prescriptions",
+            yourRecords: "Your Records",
+            recordsSubtitle: "Keep track of your important health documents.",
+            searchRecordsPlaceholder: "Search records...",
+            allTypes: "All types",
+            laboratory: "Laboratory",
+            medication: "Medication",
+            consultationType: "Consultation",
+            record: "Record",
+            type: "Type",
+            date: "Date",
+            action: "Action",
+            bloodTest: "Blood Test",
+            healthCheckReport: "Health Check Report",
+            prescription: "Prescription",
+            doctorConsultation: "Doctor Consultation",
+            view: "View",
+            privacyNotice: "Privacy Notice",
+            privacyNoticeDescription: "This frontend is a demonstration. A production healthcare platform should use secure, authenticated backend storage for medical records.",
+            addRecordTitle: "Add a Medical Record",
+            addRecordDescription: "Add a record to this demo dashboard. It will remain only until the page is refreshed.",
+            recordName: "Record name",
+            recordType: "Record type",
+            notesOptional: "Notes (optional)",
+            demoNoUpload: "This form does not upload or securely store medical files.",
+            cancel: "Cancel",
+            saveRecord: "Save Record",
+            demoNoDocument: "This sample entry has no attached medical document.",
+            close: "Close",
+            noMatchingRecords: "No matching records found. Try another search.",
+            saved: "Demo record added.",
+            demoView: "This is a sample entry, not an actual medical document.",
+            requiredName: "Please enter a record name."
+        },
+        hi: {
+            main: "मुख्य",
+            dashboard: "डैशबोर्ड",
+            aiHealthCheck: "AI स्वास्थ्य जाँच",
+            consultations: "परामर्श",
+            medicalRecords: "मेडिकल रिकॉर्ड",
+            healthTracking: "स्वास्थ्य ट्रैकिंग",
+            findDoctor: "डॉक्टर खोजें",
+            account: "खाता",
+            settings: "सेटिंग्स",
+            user: "उपयोगकर्ता",
+            patient: "मरीज़",
+            organizeRecordsDescription: "अपने स्वास्थ्य रिकॉर्ड व्यवस्थित करें और देखें।",
+            addRecord: "रिकॉर्ड जोड़ें",
+            totalRecords: "कुल रिकॉर्ड",
+            labReports: "लैब रिपोर्ट",
+            prescriptions: "प्रिस्क्रिप्शन",
+            yourRecords: "आपके रिकॉर्ड",
+            recordsSubtitle: "अपने महत्वपूर्ण स्वास्थ्य दस्तावेज़ों पर नज़र रखें।",
+            searchRecordsPlaceholder: "रिकॉर्ड खोजें...",
+            allTypes: "सभी प्रकार",
+            laboratory: "प्रयोगशाला",
+            medication: "दवा",
+            consultationType: "परामर्श",
+            record: "रिकॉर्ड",
+            type: "प्रकार",
+            date: "तारीख",
+            action: "कार्य",
+            bloodTest: "रक्त परीक्षण",
+            healthCheckReport: "स्वास्थ्य जाँच रिपोर्ट",
+            prescription: "प्रिस्क्रिप्शन",
+            doctorConsultation: "डॉक्टर परामर्श",
+            view: "देखें",
+            privacyNotice: "गोपनीयता सूचना",
+            privacyNoticeDescription: "यह फ्रंटएंड एक डेमो है। वास्तविक स्वास्थ्य प्लेटफ़ॉर्म को सुरक्षित और प्रमाणित बैकएंड स्टोरेज का उपयोग करना चाहिए।",
+            addRecordTitle: "मेडिकल रिकॉर्ड जोड़ें",
+            addRecordDescription: "डेमो में रिकॉर्ड जोड़ें। पेज रीफ़्रेश होने तक यह दिखाई देगा।",
+            recordName: "रिकॉर्ड का नाम",
+            recordType: "रिकॉर्ड का प्रकार",
+            notesOptional: "नोट्स (वैकल्पिक)",
+            demoNoUpload: "यह फ़ॉर्म मेडिकल फ़ाइल अपलोड या सुरक्षित रूप से स्टोर नहीं करता।",
+            cancel: "रद्द करें",
+            saveRecord: "रिकॉर्ड सहेजें",
+            demoNoDocument: "इस नमूना रिकॉर्ड के साथ कोई मेडिकल दस्तावेज़ नहीं है।",
+            close: "बंद करें",
+            noMatchingRecords: "कोई मेल खाता रिकॉर्ड नहीं मिला। दूसरी खोज आज़माएँ।",
+            saved: "डेमो रिकॉर्ड जोड़ दिया गया।",
+            demoView: "यह एक नमूना रिकॉर्ड है, वास्तविक मेडिकल दस्तावेज़ नहीं।",
+            requiredName: "कृपया रिकॉर्ड का नाम दर्ज करें।"
+        },
+        gu: {
+            main: "મુખ્ય",
+            dashboard: "ડેશબોર્ડ",
+            aiHealthCheck: "AI આરોગ્ય તપાસ",
+            consultations: "પરામર્શ",
+            medicalRecords: "તબીબી રેકોર્ડ",
+            healthTracking: "આરોગ્ય ટ્રેકિંગ",
+            findDoctor: "ડૉક્ટર શોધો",
+            account: "ખાતું",
+            settings: "સેટિંગ્સ",
+            user: "વપરાશકર્તા",
+            patient: "દર્દી",
+            organizeRecordsDescription: "તમારા આરોગ્ય રેકોર્ડ ગોઠવો અને જુઓ.",
+            addRecord: "રેકોર્ડ ઉમેરો",
+            totalRecords: "કુલ રેકોર્ડ",
+            labReports: "લેબ રિપોર્ટ",
+            prescriptions: "પ્રિસ્ક્રિપ્શન",
+            yourRecords: "તમારા રેકોર્ડ",
+            recordsSubtitle: "તમારા મહત્વપૂર્ણ આરોગ્ય દસ્તાવેજો પર નજર રાખો.",
+            searchRecordsPlaceholder: "રેકોર્ડ શોધો...",
+            allTypes: "બધા પ્રકાર",
+            laboratory: "પ્રયોગશાળા",
+            medication: "દવા",
+            consultationType: "પરામર્શ",
+            record: "રેકોર્ડ",
+            type: "પ્રકાર",
+            date: "તારીખ",
+            action: "ક્રિયા",
+            bloodTest: "લોહીની તપાસ",
+            healthCheckReport: "આરોગ્ય તપાસ રિપોર્ટ",
+            prescription: "પ્રિસ્ક્રિપ્શન",
+            doctorConsultation: "ડૉક્ટર પરામર્શ",
+            view: "જુઓ",
+            privacyNotice: "ગોપનીયતા સૂચના",
+            privacyNoticeDescription: "આ ફ્રન્ટએન્ડ એક ડેમો છે. વાસ્તવિક આરોગ્ય પ્લેટફોર્મે સુરક્ષિત અને પ્રમાણિત બેકએન્ડ સ્ટોરેજનો ઉપયોગ કરવો જોઈએ.",
+            addRecordTitle: "તબીબી રેકોર્ડ ઉમેરો",
+            addRecordDescription: "ડેમોમાં રેકોર્ડ ઉમેરો. પેજ ફરી લોડ થાય ત્યાં સુધી તે દેખાશે.",
+            recordName: "રેકોર્ડનું નામ",
+            recordType: "રેકોર્ડનો પ્રકાર",
+            notesOptional: "નોંધ (વૈકલ્પિક)",
+            demoNoUpload: "આ ફોર્મ તબીબી ફાઇલો અપલોડ કરતું નથી કે સુરક્ષિત રીતે સંગ્રહતું નથી.",
+            cancel: "રદ કરો",
+            saveRecord: "રેકોર્ડ સાચવો",
+            demoNoDocument: "આ નમૂના રેકોર્ડ સાથે કોઈ તબીબી દસ્તાવેજ જોડાયેલો નથી.",
+            close: "બંધ કરો",
+            noMatchingRecords: "મેળ ખાતો રેકોર્ડ મળ્યો નથી. બીજી શોધ અજમાવો.",
+            saved: "ડેમો રેકોર્ડ ઉમેરાયો.",
+            demoView: "આ નમૂનો છે, વાસ્તવિક તબીબી દસ્તાવેજ નથી.",
+            requiredName: "કૃપા કરીને રેકોર્ડનું નામ દાખલ કરો."
+        }
+    };
+
+    const typeLabels = {
+        laboratory: { en: "Laboratory", hi: "प्रयोगशाला", gu: "પ્રયોગશાળા" },
+        ai: { en: "AI Health Check", hi: "AI स्वास्थ्य जाँच", gu: "AI આરોગ્ય તપાસ" },
+        medication: { en: "Medication", hi: "दवा", gu: "દવા" },
+        consultation: { en: "Consultation", hi: "परामर्श", gu: "પરામર્શ" }
+    };
+
+    const initialNames = {
+        "Blood Test": { en: "Blood Test", hi: "रक्त परीक्षण", gu: "લોહીની તપાસ" },
+        "Health Check Report": { en: "Health Check Report", hi: "स्वास्थ्य जाँच रिपोर्ट", gu: "આરોગ્ય તપાસ રિપોર્ટ" },
+        "Prescription": { en: "Prescription", hi: "प्रिस्क्रिप्शन", gu: "પ્રિસ્ક્રિપ્શન" },
+        "Doctor Consultation": { en: "Doctor Consultation", hi: "डॉक्टर परामर्श", gu: "ડૉક્ટર પરામર્શ" }
+    };
+
+    let currentLanguage = localStorage.getItem("mediAI-language") || "en";
+    if (!translations[currentLanguage]) currentLanguage = "en";
+
+    function t(key) {
+        return translations[currentLanguage][key] || translations.en[key] || key;
+    }
+
+    function getRecordName(row) {
+        return row.querySelector(".record-name span:last-child");
+    }
+
+    function getOriginalName(row) {
+        return row.dataset.originalName || row.querySelector(".view-btn").dataset.record;
+    }
+
+    function localizeRecords() {
+        document.querySelectorAll("#recordsBody tr").forEach(row => {
+            const original = getOriginalName(row);
+            const nameNode = getRecordName(row);
+
+            if (initialNames[original]) {
+                nameNode.textContent = initialNames[original][currentLanguage];
+            } else {
+                nameNode.textContent = original;
+            }
+
+            const badge = row.querySelector(".type-badge");
+            badge.textContent = typeLabels[row.dataset.type]?.[currentLanguage] || row.dataset.type;
+
+            const button = row.querySelector(".view-btn");
+            button.textContent = t("view");
+        });
+    }
+
+    function applyTranslations() {
+        document.documentElement.lang = currentLanguage;
+
+        document.querySelectorAll("[data-i18n]").forEach(element => {
+            const key = element.dataset.i18n;
+            if (translations[currentLanguage][key]) {
+                element.textContent = t(key);
+            }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+            const key = element.dataset.i18nPlaceholder;
+            if (translations[currentLanguage][key]) {
+                element.placeholder = t(key);
+            }
+        });
+
+        const selectedLanguage = document.getElementById("languageSelect");
+        selectedLanguage.value = currentLanguage;
+
+        localizeRecords();
+        updateStatistics();
+        filterRecords();
+    }
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.hidden = false;
+
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => {
+            toast.hidden = true;
+        }, 3000);
+    }
+
+    function updateStatistics() {
+        const rows = [...recordsBody.querySelectorAll("tr")];
+
+        document.getElementById("totalRecords").textContent = rows.length;
+        document.getElementById("labRecords").textContent =
+            rows.filter(row => row.dataset.type === "laboratory").length;
+        document.getElementById("prescriptionRecords").textContent =
+            rows.filter(row => row.dataset.type === "medication").length;
+    }
+
+    function filterRecords(source) {
+        if (source) {
+            searchInputs.forEach(input => {
+                if (input !== source) input.value = source.value;
+            });
+        }
+
+        const query = document.getElementById("recordSearch").value.trim().toLocaleLowerCase();
+        const selectedType = typeFilter.value;
+        let visibleCount = 0;
+
+        [...recordsBody.querySelectorAll("tr")].forEach(row => {
+            const matchesText = row.textContent.toLocaleLowerCase().includes(query);
+            const matchesType = selectedType === "all" || row.dataset.type === selectedType;
+
+            row.hidden = !(matchesText && matchesType);
+
+            if (!row.hidden) visibleCount++;
+        });
+
+        emptyState.textContent = t("noMatchingRecords");
+        emptyState.style.display = visibleCount ? "none" : "block";
+    }
+
+    function formatDate(dateValue) {
+        const date = new Date(dateValue + "T12:00:00");
+
+        if (Number.isNaN(date.getTime())) return dateValue;
+
+        return new Intl.DateTimeFormat(
+            currentLanguage === "hi" ? "hi-IN" :
+            currentLanguage === "gu" ? "gu-IN" : "en-GB",
+            { day: "2-digit", month: "short", year: "numeric" }
+        ).format(date);
+    }
+
+    function iconForType(type) {
+        return {
+            laboratory: ["🧪", "file-red"],
+            ai: ["📄", "file-blue"],
+            medication: ["💊", "file-purple"],
+            consultation: ["👨‍⚕️", "file-green"]
+        }[type] || ["📄", "file-blue"];
+    }
+
+    function createRecordRow(name, type, date, notes) {
+        const row = document.createElement("tr");
+        row.dataset.type = type;
+        row.dataset.originalName = name;
+        row.dataset.notes = notes || "";
+
+        const nameCell = document.createElement("td");
+        const nameWrapper = document.createElement("div");
+        nameWrapper.className = "record-name";
+
+        const icon = document.createElement("span");
+        const [symbol, colorClass] = iconForType(type);
+        icon.className = "record-file-icon " + colorClass;
+        icon.textContent = symbol;
+        icon.setAttribute("aria-hidden", "true");
+
+        const nameText = document.createElement("span");
+        nameText.textContent = name;
+
+        nameWrapper.append(icon, nameText);
+        nameCell.append(nameWrapper);
+
+        const typeCell = document.createElement("td");
+        const typeBadge = document.createElement("span");
+        typeBadge.className = "type-badge";
+        typeBadge.textContent = typeLabels[type]?.[currentLanguage] || type;
+        typeCell.append(typeBadge);
+
+        const dateCell = document.createElement("td");
+        dateCell.className = "record-date";
+        dateCell.dataset.date = date;
+        dateCell.textContent = formatDate(date);
+
+        const actionCell = document.createElement("td");
+        const viewButton = document.createElement("button");
+        viewButton.type = "button";
+        viewButton.className = "view-btn";
+        viewButton.dataset.record = name;
+        viewButton.textContent = t("view");
+        actionCell.append(viewButton);
+
+        row.append(nameCell, typeCell, dateCell, actionCell);
+        return row;
+    }
+
+    searchInputs.forEach(input => {
+        input.addEventListener("input", () => filterRecords(input));
+    });
+
+    typeFilter.addEventListener("change", () => filterRecords());
+
+    document.getElementById("languageSelect").addEventListener("change", event => {
+        const requestedLanguage = event.target.value;
+        currentLanguage = translations[requestedLanguage] ? requestedLanguage : "en";
+
+        try {
+            localStorage.setItem("mediAI-language", currentLanguage);
+        } catch (error) {
+            // Language still works for this page if storage is unavailable.
+        }
+
+        applyTranslations();
+    });
+
+    document.getElementById("addRecordBtn").addEventListener("click", () => {
+        document.getElementById("newRecordDate").value =
+            new Date().toLocaleDateString("en-CA");
+
+        recordDialog.showModal();
+    });
+
+    document.getElementById("cancelRecordBtn").addEventListener("click", () => {
+        recordDialog.close();
+    });
+
+    recordForm.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const name = document.getElementById("newRecordName").value.trim();
+        const type = document.getElementById("newRecordType").value;
+        const date = document.getElementById("newRecordDate").value;
+        const notes = document.getElementById("newRecordNotes").value.trim();
+
+        if (!name) {
+            showToast(t("requiredName"));
+            return;
+        }
+
+        if (!date || !typeLabels[type]) {
+            showToast("Please provide a valid date and record type.");
+            return;
+        }
+
+        const row = createRecordRow(name, type, date, notes);
+        recordsBody.prepend(row);
+
+        recordForm.reset();
+        recordDialog.close();
+
+        updateStatistics();
+        filterRecords();
+
+        showToast(t("saved"));
+    });
+
+    recordsBody.addEventListener("click", event => {
+        const button = event.target.closest(".view-btn");
+        if (!button) return;
+
+        const row = button.closest("tr");
+        const name = getOriginalName(row);
+        const date = row.querySelector(".record-date").textContent;
+        const type = typeLabels[row.dataset.type]?.[currentLanguage] || row.dataset.type;
+        const notes = row.dataset.notes || "";
+
+        document.getElementById("viewRecordTitle").textContent = name;
+        document.getElementById("viewRecordDetails").textContent = type + " · " + date;
+        document.getElementById("viewRecordNotes").textContent = notes;
+
+        viewDialog.showModal();
+    });
+
+    document.getElementById("closeViewBtn").addEventListener("click", () => {
+        viewDialog.close();
+    });
+
+    // Close dialogs when the user clicks outside their content.
+    [recordDialog, viewDialog].forEach(dialog => {
+        dialog.addEventListener("click", event => {
+            if (event.target === dialog) dialog.close();
+        });
+    });
+
+    applyTranslations();
+    updateStatistics();
+});
+</script>
+</body>
+</html>
